@@ -1,9 +1,14 @@
 package com.bank.manager.beans;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
@@ -13,12 +18,11 @@ public abstract class Person {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	@OneToOne(targetEntity=Coordonnee.class)
+	
+	@OneToOne(targetEntity=Coordonnee.class, fetch=FetchType.EAGER)
 	@JoinColumn(name="coordonnees", nullable=false)
 	private Coordonnee coordonnee;
-	@OneToOne(targetEntity=Situation.class)
-	@JoinColumn(name="situation", nullable=false)
-	private Situation situation;
+	
 	
 	public Person() {
 		super();
@@ -36,6 +40,12 @@ public abstract class Person {
 	}
 	public void setCoordonnee(Coordonnee coordonnee) {
 		this.coordonnee = coordonnee;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Hello, "+this.getClass().getSimpleName();
 	}
 	
 }

@@ -13,6 +13,7 @@ import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
 import com.bank.manager.beans.Employee;
 import com.bank.manager.beans.Operation;
+import com.bank.manager.beans.Situation;
 import com.bank.manager.beans.Tache;
 
 public class IManagerDaoImpl implements IManagerDao{
@@ -46,13 +47,26 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Employee sup) {
+	public Employee addEmployee(Employee employee, Coordonnee coordonnee, Adresse adress, Employee sup) {
 		// TODO Auto-generated method stub
-		if(employee == null || sup == null)
+		if(employee == null || coordonnee == null || adress == null)
 			throw new RuntimeException("NULL REFERENCE NOT ACCEPTED");
 		else
 		{
-			employee.setSuperieurHierarchique(sup);
+			System.out.println("PHASE1");
+			
+			//An Employee can and can't have a superior (IT IS OPTIONAL AND DEPENDS ON THE HIERARCHY)
+			if(sup!=null)
+				employee.setSuperieurHierarchique(sup);
+			
+			em.persist(adress);
+			em.flush();
+			System.out.println("PHASE2");
+			coordonnee.setAdresse(adress);
+			em.persist(coordonnee);
+			em.flush();
+			System.out.println("PHASE3");
+			employee.setCoordonnee(coordonnee);
 			em.persist(employee);
 			em.flush();
 			return employee;
@@ -62,7 +76,7 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public Employee getEmployee(Long id) {
 		// TODO Auto-generated method stub
-		Query query = em.createQuery("SELECT e FROM Employe e WHERE e.id = :id");
+		Query query = em.createQuery("SELECT e FROM Employee e WHERE e.id = :id");
 		query.setParameter("id",id);
 		Employee e = (Employee)query.getSingleResult();
 		if(e==null)
@@ -74,7 +88,7 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public List<Employee> rechercherEmployeParMC(String mc) {
 		// TODO Auto-generated method stub
-		Query query = em.createQuery("SELECT e FROM Employe e LEFT JOIN e.coordonne as c"
+		Query query = em.createQuery("SELECT e FROM Employee e LEFT JOIN e.coordonne as c"
 				+ " WHERE c.nom like :mc OR c.prenom like :mc");
 		query.setParameter("mc", mc);
 		List<Employee> liste = (List<Employee>)query.getResultList();
@@ -84,14 +98,27 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Client addClient(Client client, Employee employee) {
+	public Client addClient(Client client, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee) {
 		// TODO Auto-generated method stub
-		if(client == null || employee == null)
+		if(client == null || employee == null || coordonnee == null || employee == null)
 			throw new RuntimeException(
 					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL <CLIENT:"+
 			String.valueOf(client==null)+">, <EMPLOYEE:"+String.valueOf(employee==null)+">");
 		
+		em.persist(adresse);
+		em.flush();
+		
+		em.persist(situation);
+		em.flush();
+		
+		coordonnee.setAdresse(adresse);
+		em.persist(coordonnee);
+		em.flush();
+		
+		client.setCoordonnee(coordonnee);
 		client.setEmployee(employee);
+		client.setSituation(situation);
+		
 		em.persist(client);
 		em.flush();
 		return client;
@@ -125,28 +152,43 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Compte addCompte(Compte compte, Client client, Employee employee,
-			double soldeDepart) {
+	public Compte addCompte(Compte compte, Long code_client, Long code_employee) {
 		// TODO Auto-generated method stub
-		if(compte==null || client==null || employee==null)
+		if(compte==null || code_client==null || code_employee==null)
 			throw new RuntimeException(
 					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL "
-					+ "<CLIENT:"+String.valueOf(client==null)+">, "
-					+ "<EMPLOYEE:"+String.valueOf(employee==null)+">, "
+					+ "<CLIENT:"+String.valueOf(code_client==null)+">, "
+					+ "<EMPLOYEE:"+String.valueOf(code_employee==null)+">, "
 					+ "<COMPTE:"+String.valueOf(compte==null)+">");
 		else
 		{
+			Client client = em.find(Client.class, code_client);
+			Employee employee = em.find(Employee.class, code_employee);
+			/*Query q = em.createQuery("INSERT INTO Compte(DTYPE, codeCompte, dateCreation, soldeDepart, client_codeCompte,"
+					+ " employee_id) values(?,?,?,?,?,?) ");
+			q.setParameter(1, "CE");
+			q.setParameter(2, compte.getCodeCompte());
+			q.setParameter(3, compte.getDateCreation());
+			q.setParameter(4, compte.getSoldeDepart());
+			q.setParameter(5, client.getId());
+			q.setParameter(6, employee.getId());
+			q.executeUpdate();*/
+			
 			compte.setClient(client);
 			compte.setEmployee(employee);
+			System.out.println("COMPTE FULL");
 			em.persist(compte);
+			em.flush();
 			return compte;
 		}
 	}
 
 	@Override
-	public Compte getCompte(Long id) {
+	public Compte getCompte(String codeCompte) {
 		// TODO Auto-generated method stub
-		Compte c = em.find(Compte.class, id);
+		Query query = em.createQuery("SELECT c FROM Compte c WHERE c.codeCompte = :id");
+		query.setParameter("id", codeCompte);
+		Compte c = (Compte)query.getSingleResult();
 		if(c==null)
 			throw new RuntimeException("COMPTE NOT FOUND !");
 		return c;
@@ -155,11 +197,13 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public Compte getCompteCodeCompte(String codeCompte) {
 		// TODO Auto-generated method stub
-		Query query = em.createQuery("SELECT c from Compte c WHERE c.codeCompte = :codeCompte");
-		query.setParameter("codeCompte", codeCompte);
+		Query query = em.createQuery("SELECT c from CompteEpargne c WHERE c.codeCompte like :codeCompte");
+		query.setParameter("codeCompte", "%"+codeCompte+"%");
 		Compte compte = (Compte)query.getSingleResult();
 		if(compte==null)
 			throw new RuntimeException("COMPTE NOT FOUND !");
+		else
+			System.out.println("NOT NULL COMPTE"+compte);
 		return compte;
 	}
 
@@ -177,17 +221,19 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Operation addOperation(Operation operation, Compte compte,
-			Employee employee, double somme) {
+	public Operation addOperation(Operation operation, String code_compte,
+			Long code_employee, double somme) {
 		// TODO Auto-generated method stub
-		if(operation==null || compte==null || employee==null)
+		if(operation==null || code_compte==null || code_employee==null)
 			throw new RuntimeException(
 					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL "
 					+ "<OPERATION:"+String.valueOf(operation==null)+">, "
-					+ "<EMPLOYEE:"+String.valueOf(employee==null)+">, "
-					+ "<COMPTE:"+String.valueOf(compte==null)+">");
-		operation.setCompte(compte);
-		operation.setEmployee(employee);
+					+ "<EMPLOYEE:"+String.valueOf(code_employee==null)+">, "
+					+ "<COMPTE:"+String.valueOf(code_compte==null)+">");
+		Employee e = em.find(Employee.class, code_employee);
+		Compte c = em.find(Compte.class, code_compte);
+		operation.setCompte(c);
+		operation.setEmployee(e);
 		operation.setSomme(somme);
 		em.persist(operation);
 		em.flush();
@@ -208,10 +254,10 @@ public class IManagerDaoImpl implements IManagerDao{
 	public List<Operation> getOperationByCompte(Compte c) {
 		// TODO Auto-generated method stub
 		Query query = em.createQuery("SELECT o FROM Operation o LEFT JOIN o.compte as compte WHERE compte.id = :id");
-		query.setParameter("id", c.getId());
+		query.setParameter("id", c.getCodeCompte());
 		List<Operation> operations = (List<Operation>)query.getResultList();
 		if(operations==null || operations.size()==0)
-			throw new RuntimeException("NO OPERATION FOUND FOR THE COMPTE : "+c.getId());
+			throw new RuntimeException("NO OPERATION FOUND FOR THE COMPTE : "+c.getCodeCompte());
 		return operations;
 	}
 

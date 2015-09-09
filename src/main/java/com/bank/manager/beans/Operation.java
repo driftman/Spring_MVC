@@ -16,6 +16,9 @@ import javax.persistence.ManyToOne;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING, name="TYPE_OPERATION", length=4)
 public class Operation {
+	{
+		this.date = new Date();
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;

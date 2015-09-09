@@ -16,6 +16,7 @@ public class Adresse {
 	private String quartier;
 	private Integer code_postale;
 	private Integer numero_lieu;
+	
 	public String getVille() {
 		return ville;
 	}
@@ -54,6 +55,10 @@ public class Adresse {
 	}
 	public Long getId() {
 		return id;
+	}
+	
+	public String toString() {
+		return "Hello Adresse:"+this.getClass().getSimpleName();
 	}
 	
 }

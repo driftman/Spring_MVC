@@ -11,8 +11,11 @@ import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
+import com.bank.manager.beans.Credit;
 import com.bank.manager.beans.Employee;
 import com.bank.manager.beans.Operation;
+import com.bank.manager.beans.Retrait;
+import com.bank.manager.beans.Situation;
 import com.bank.manager.beans.Tache;
 import com.bank.manager.dao.IManagerDao;
 
@@ -40,9 +43,9 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Employee sup) {
+	public Employee addEmployee(Employee employee, Coordonnee coordonnee, Adresse adresse, Employee sup) {
 		// TODO Auto-generated method stub
-		return dao.addEmployee(employee, sup);
+		return dao.addEmployee(employee, coordonnee, adresse, sup);
 	}
 
 	@Override
@@ -57,11 +60,7 @@ public class IManagerMetierImpl implements IManagerMetier {
 		return dao.rechercherEmployeParMC(mc);
 	}
 
-	@Override
-	public Client addClient(Client client, Employee employee) {
-		// TODO Auto-generated method stub
-		return dao.addClient(client, employee);
-	}
+	
 
 	@Override
 	public Client getClient(Long id) {
@@ -82,16 +81,15 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Compte addCompte(Compte compte, Client client, Employee employee,
-			double soldeDepart) {
+	public Compte addCompte(Compte compte, Long code_client, Long code_employe) {
 		// TODO Auto-generated method stub
-		return dao.addCompte(compte, client, employee, soldeDepart);
+		return dao.addCompte(compte, code_client, code_employe);
 	}
 
 	@Override
-	public Compte getCompte(Long id) {
+	public Compte getCompte(String codeCompte) {
 		// TODO Auto-generated method stub
-		return dao.getCompte(id);
+		return dao.getCompte(codeCompte);
 	}
 
 	@Override
@@ -107,34 +105,34 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Operation Versement(Operation operation, Compte compte,
-			Employee employee, double montant) {
+	public Operation versement(Operation operation, String code_compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		dao.addOperation(operation, compte, employee, montant);
-		Compte c = this.getCompte(compte.getId());
+		Employee e = dao.getEmployee(code_employee);
+		Compte c = dao.getCompte(code_compte);
 		c.setSoldeDepart(c.getSoldeDepart()+montant);
-		this.persistCompte(c);
+		dao.addOperation(operation, code_compte, code_employee, montant);
 		return operation;
 		
 	}
 
 	@Override
-	public Operation Retrait(Operation operation, Compte compte,
-			Employee employee, double montant) {
+	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		dao.addOperation(operation, compte, employee, montant);
-		Compte c = this.getCompte(compte.getId());
+		Employee e = dao.getEmployee(code_employee);
+		Compte c = dao.getCompte(code_compte);
 		c.setSoldeDepart(c.getSoldeDepart()-montant);
-		this.persistCompte(c);
+		dao.addOperation(operation, code_compte, code_employee, montant);
 		return operation;
 	}
 
 	@Override
-	public Operation Virement(Operation operation, Compte compte1,
-			Compte compte2, Employee employee, double montant) {
+	public Operation virement(String code_compte1, String code_compte2, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		this.Retrait(operation, compte1, employee, montant);
-		this.Versement(operation, compte2, employee, montant);
+		Compte c = dao.getCompte(code_compte1);
+		if(c.getSoldeDepart()<montant)
+			throw new RuntimeException("PAS DE CREDIT SUFFISANT POUR : "+c.getClient().getCoordonnee().getNom());
+		this.retrait(new Retrait(), code_compte1, code_employee, montant);
+		this.versement(new Credit(), code_compte2, code_employee, montant);
 		return null;
 	}
 
@@ -167,6 +165,13 @@ public class IManagerMetierImpl implements IManagerMetier {
 	public Compte persistCompte(Compte c) {
 		// TODO Auto-generated method stub
 		return dao.persistCompte(c);
+	}
+
+	@Override
+	public Client addClient(Client client, Situation situation,
+			Coordonnee coordonnee, Adresse adresse, Employee employee) {
+		// TODO Auto-generated method stub
+		return dao.addClient(client, situation, coordonnee, adresse, employee);
 	}
 
 }

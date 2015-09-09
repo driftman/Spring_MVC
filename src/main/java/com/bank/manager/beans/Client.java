@@ -2,21 +2,37 @@ package com.bank.manager.beans;
 
 import java.util.List;
 
+
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 @Entity
 public class Client extends Person {
 	
-	@OneToMany(targetEntity=Compte.class, mappedBy="client")
+	@OneToMany(targetEntity=Compte.class, mappedBy="client", fetch=FetchType.LAZY)
 	private List<Compte> comptes;
 	
-	@ManyToOne(targetEntity=Employee.class)
-	private Employee createurCompte;
-	
 	@ManyToOne
+	@JoinColumn(name="employee")
 	private Employee employee;
 	
+	@OneToOne(targetEntity=Situation.class, fetch=FetchType.LAZY)
+	@JoinColumn(name="situation", nullable=true, updatable=true)
+	private Situation situation;
+	
+	
+	
+	public Situation getSituation() {
+		return situation;
+	}
+	public void setSituation(Situation situation) {
+		this.situation = situation;
+	}
 	public Employee getEmployee() {
 		return employee;
 	}
@@ -31,19 +47,9 @@ public class Client extends Person {
 	public void setAccepte(Boolean accepte) {
 		this.accepte = accepte;
 	}
-	public Employee getCreateurCompte() {
-		return createurCompte;
-	}
-	public void setCreateurCompte(Employee createurCompte) {
-		this.createurCompte = createurCompte;
-	}
+	
 	public Client() {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-	public Client(Coordonnee coordonnee, Employee createurCompte) {
-		super(coordonnee);
-		this.createurCompte = createurCompte;
 		// TODO Auto-generated constructor stub
 	}
 	public List<Compte> getComptes() {
@@ -52,5 +58,7 @@ public class Client extends Person {
 	public void setComptes(List<Compte> comptes) {
 		this.comptes = comptes;
 	}
+	
+	
 
 }

@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 
 @Entity
@@ -22,6 +24,9 @@ public class Situation {
 	
 	
 	
+	public Long getId() {
+		return id;
+	}
 	public Situation(String lettreMotivation,
 			Boolean fonctionnaire, Boolean salaireFix, double salaireMensuel,
 			Boolean biens, Boolean marie) {

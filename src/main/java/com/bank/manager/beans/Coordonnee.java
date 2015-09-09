@@ -1,9 +1,11 @@
 package com.bank.manager.beans;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -15,8 +17,12 @@ public class Coordonnee {
 	private String prenom;
 	private Integer age;
 	private String email;
-	@OneToOne(targetEntity=Adresse.class)
+	
+	
+	@OneToOne(targetEntity=Adresse.class, fetch=FetchType.EAGER)
+	@JoinColumn(name="adresse_id", nullable=false, updatable=true)
 	private Adresse adresse;
+	
 	
 	public String getNom() {
 		return nom;
@@ -48,14 +54,12 @@ public class Coordonnee {
 	public void setAdresse(Adresse adresse) {
 		this.adresse = adresse;
 	}
-	public Coordonnee(String nom, String prenom, Integer age, String email,
-			Adresse adresse) {
+	public Coordonnee(String nom, String prenom, Integer age, String email) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
 		this.age = age;
 		this.email = email;
-		this.adresse = adresse;
 	}
 	public Coordonnee() {
 		super();
@@ -63,6 +67,10 @@ public class Coordonnee {
 	}
 	public Long getId() {
 		return id;
+	}
+	
+	public String toString() {
+		return "Hello Coordonnee:"+this.getClass().getSimpleName();
 	}
 	
 }

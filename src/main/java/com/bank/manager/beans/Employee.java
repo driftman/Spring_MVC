@@ -2,19 +2,25 @@ package com.bank.manager.beans;
 
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 @Entity
 public class Employee extends Person{
 	
-	@OneToMany(targetEntity=Operation.class, mappedBy="employee")
+	@OneToMany(targetEntity=Operation.class, mappedBy="employee", fetch=FetchType.LAZY)
 	private List<Operation> operations;
 	
-	@OneToMany(targetEntity=Compte.class, mappedBy="employee")
+	@OneToMany(targetEntity=Compte.class, mappedBy="employee", fetch=FetchType.LAZY)
 	private List<Compte> comptes;
 	
+	
+	
 	@OneToOne(targetEntity=Employee.class)
+	@JoinColumn(name="superior", nullable=true)
 	private Employee superieurHierarchique;
 	
 	@OneToMany(targetEntity=Tache.class, mappedBy="lanceurTicket")
@@ -28,10 +34,14 @@ public class Employee extends Person{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Employee(Coordonnee coordonnee, Employee superieurHierarchique) {
+	
+
+	public Employee(Coordonnee coordonnee) {
 		super(coordonnee);
-		this.superieurHierarchique = superieurHierarchique;
+		// TODO Auto-generated constructor stub
 	}
+
+
 
 	public List<Tache> getTachesLances() {
 		return tachesLances;

@@ -1,7 +1,12 @@
 package com.bank.manager.beans;
 
-import java.util.Date;
 
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("CE")
 public class CompteEpargne extends Compte{
 
 	public CompteEpargne() {
@@ -9,9 +14,9 @@ public class CompteEpargne extends Compte{
 		// TODO Auto-generated constructor stub
 	}
 
-	public CompteEpargne(String codeCompte, Date dateCreation, Client client, Employee employee,
+	public CompteEpargne(String codeCompte, 
 			double soldeDepart) {
-		super(codeCompte, dateCreation, client, employee, soldeDepart);
+		super(codeCompte, soldeDepart);
 		// TODO Auto-generated constructor stub
 	}
 

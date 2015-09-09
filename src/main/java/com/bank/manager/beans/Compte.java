@@ -1,33 +1,56 @@
 package com.bank.manager.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="TYPE_COMPTE", discriminatorType=DiscriminatorType.STRING, length=4)
-public abstract class Compte {
+@DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING, length=4)
+public abstract class Compte implements Serializable {
 	
 	{
 		this.dateCreation = new Date();
 	}
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
-	
+	@Column(name="CODE_COMPTE", unique=true, updatable=false) @NotNull 
 	private String codeCompte;
+	
+	private double soldeDepart;
+	
+	@Temporal(TemporalType.DATE) @Column(nullable=false) @NotNull
+	private Date dateCreation;
+	
+	@ManyToOne
+	@JoinColumn
+	private Employee employee;
+	
+	@ManyToOne
+	@JoinColumn
+	private Client client;
+	
+	@OneToMany(targetEntity=Operation.class, mappedBy="compte", fetch=FetchType.EAGER)
+	private List<Operation> operations;
+	
 	public String getCodeCompte() {
 		return codeCompte;
 	}
@@ -40,29 +63,11 @@ public abstract class Compte {
 	public void setOperations(List<Operation> operations) {
 		this.operations = operations;
 	}
-	public Long getId() {
-		return id;
-	}
-	private Date dateCreation;
 	
-	@ManyToOne(targetEntity=Compte.class)
-	private Client client;
-	
-	@ManyToOne(targetEntity=Employee.class)
-	private Employee employee;
-	
-	private double soldeDepart;
-	
-	@OneToMany(targetEntity=Operation.class, mappedBy="compte")
-	private List<Operation> operations;
-	
-	
-	public Compte(String codeCompte, Date dateCreation, Client client, Employee employee,
+	public Compte(String codeCompte, 
 			double soldeDepart) {
 		super();
 		this.codeCompte = codeCompte;
-		this.client = client;
-		this.employee = employee;
 		this.soldeDepart = soldeDepart;
 	}
 	public Compte() {
@@ -93,4 +98,10 @@ public abstract class Compte {
 	public void setSoldeDepart(double soldeDepart) {
 		this.soldeDepart = soldeDepart;
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString()+" || "+this.getClass().getSimpleName();
+	}
+	
 }

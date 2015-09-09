@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
@@ -47,7 +48,7 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Coordonnee coordonnee, Adresse adress, Employee sup) {
+	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adress, Employee sup) {
 		// TODO Auto-generated method stub
 		if(employee == null || coordonnee == null || adress == null)
 			throw new RuntimeException("NULL REFERENCE NOT ACCEPTED");
@@ -59,14 +60,20 @@ public class IManagerDaoImpl implements IManagerDao{
 			if(sup!=null)
 				employee.setSuperieurHierarchique(sup);
 			
+
+			em.persist(account);
+			em.flush();
+			
 			em.persist(adress);
 			em.flush();
+			
 			System.out.println("PHASE2");
 			coordonnee.setAdresse(adress);
 			em.persist(coordonnee);
 			em.flush();
 			System.out.println("PHASE3");
 			employee.setCoordonnee(coordonnee);
+			employee.setAccount(account);
 			em.persist(employee);
 			em.flush();
 			return employee;
@@ -98,12 +105,15 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Client addClient(Client client, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee) {
+	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee) {
 		// TODO Auto-generated method stub
 		if(client == null || employee == null || coordonnee == null || employee == null)
 			throw new RuntimeException(
 					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL <CLIENT:"+
 			String.valueOf(client==null)+">, <EMPLOYEE:"+String.valueOf(employee==null)+">");
+
+		em.persist(account);
+		em.flush();
 		
 		em.persist(adresse);
 		em.flush();
@@ -115,6 +125,7 @@ public class IManagerDaoImpl implements IManagerDao{
 		em.persist(coordonnee);
 		em.flush();
 		
+		client.setAccount(account);
 		client.setCoordonnee(coordonnee);
 		client.setEmployee(employee);
 		client.setSituation(situation);
@@ -138,17 +149,14 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Client acceptClient(Client c) {
+	public Client acceptClient(Long code_client) {
 		// TODO Auto-generated method stub
-		if(c==null)
+		if(code_client==null)
 			throw new RuntimeException("CLIENT SHOULD NOT BE NULL");
-		Query q = em.createQuery("UPDATE c FROM Client c WHERE c.id = :id SET c.accepte=true");
-		q.setParameter("id", c.getId());
-		Long id = Long.decode(String.valueOf(q.executeUpdate()));
-		Client updatedClient = em.find(Client.class, id);
-		if(updatedClient==null)
-			throw new RuntimeException("ERROR WHILE UPDATING ...");
-		return updatedClient;
+		Client c = this.getClient(code_client);
+		c.setAccepte(true);
+		em.flush();
+		return c;
 	}
 
 	@Override
@@ -209,14 +217,13 @@ public class IManagerDaoImpl implements IManagerDao{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Compte> getCompteByClient(Client c) {
+	public List<Compte> getCompteByClient(Long code_client) {
 		// TODO Auto-generated method stub
-		Query query = em.createQuery("SELECT c from Compte compte LEFT JOIN c.client as client "
-				+ "WHERE client.id = :id");
-		query.setParameter("id", c.getId());
+		Query query = em.createQuery("SELECT compte from Compte compte WHERE compte.client.id = :id");
+		query.setParameter("id", code_client);
 		List<Compte> comptes = (List<Compte>)query.getResultList();
 		if(comptes == null || comptes.size() == 0)
-			throw new RuntimeException("THE CLIENT WITH ID: "+c.getId()+" HAS NO COMPTE");
+			throw new RuntimeException("THE CLIENT WITH ID: "+code_client+" HAS NO COMPTE");
 		return comptes;
 	}
 
@@ -299,10 +306,64 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Compte persistCompte(Compte c) {
+	@SuppressWarnings("unchecked")
+	public List<Compte> getComptes() {
 		// TODO Auto-generated method stub
-		em.persist(c);
-		return c;
+		return (List<Compte>)em.createQuery("SELECT c FROM Compte c").getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Operation> getOperations() {
+		// TODO Auto-generated method stub
+		return (List<Operation>)em.createQuery("SELECT o FROM Operation o").getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Tache> getTickets() {
+		// TODO Auto-generated method stub
+		return (List<Tache>)em.createQuery("SELECT t FROM Tache t").getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Client> getClients() {
+		// TODO Auto-generated method stub
+		return (List<Client>)em.createQuery("SELECT c FROM Client c").getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Employee> getEmployees() {
+		// TODO Auto-generated method stub
+		List<Employee> employees=  (List<Employee>)em.createQuery("SELECT e FROM Employee e").getResultList();
+		if(employees.size()==0)
+			throw new RuntimeException("FOREVER ALONE BUDDY SORRY FOR YOU!");
+		return employees;
+	}
+
+	@Override
+	public List<Compte> getCompteByEmployee(Long code_employee) {
+		// TODO Auto-generated method stub
+		Query query = em.createQuery("SELECT compte from Compte compte WHERE compte.employee.id = :id");
+		query.setParameter("id", code_employee);
+		List<Compte> comptes = (List<Compte>)query.getResultList();
+		if(comptes == null || comptes.size() == 0)
+			throw new RuntimeException("THE EMPLOYEE WITH ID: "+code_employee+" HAS NO COMPTE");
+		return comptes;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Compte> getComptesWithMC(String mc) {
+		// TODO Auto-generated method stub
+		List<Compte> comptes =  (List<Compte>)em.createQuery("SELECT c FROM Compte c WHERE c.codeCompte like :mc")
+				.setParameter("mc",	"%"+mc+"%")
+				.getResultList();
+		if(comptes.size()==0)
+			throw new RuntimeException("NO COMPTE FOUND FOR THIS KEYWORD !");
+		return comptes;
 	}
 
 }

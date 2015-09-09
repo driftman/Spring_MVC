@@ -1,6 +1,6 @@
 package com.bank.manager.beans;
 
-import java.io.Serializable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +9,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -25,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING, length=4)
-public abstract class Compte implements Serializable {
+public abstract class Compte {
 	
 	{
 		this.dateCreation = new Date();
@@ -40,11 +37,11 @@ public abstract class Compte implements Serializable {
 	@Temporal(TemporalType.DATE) @Column(nullable=false) @NotNull
 	private Date dateCreation;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn
 	private Employee employee;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn
 	private Client client;
 	
@@ -101,7 +98,7 @@ public abstract class Compte implements Serializable {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return super.toString()+" || "+this.getClass().getSimpleName();
+		return this.getClass().getSimpleName();
 	}
 	
 }

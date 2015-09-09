@@ -24,13 +24,20 @@ public class Operation {
 	private Long id;
 	private double somme;
 	
-	@ManyToOne(targetEntity=Compte.class, fetch=FetchType.LAZY)
+	@ManyToOne(targetEntity=Compte.class, fetch=FetchType.EAGER)
 	private Compte compte;
 	
-	@ManyToOne(targetEntity=Employee.class)
+	@ManyToOne(targetEntity=Employee.class, fetch=FetchType.EAGER)
 	private Employee employee;
 	
 	private Date date;
+	private String typeTransert;
+	public String getTypeTransert() {
+		return typeTransert;
+	}
+	public void setTypeTransert(String typeTransert) {
+		this.typeTransert = typeTransert;
+	}
 	public Operation() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -68,6 +75,10 @@ public class Operation {
 	}
 	public Long getId() {
 		return id;
+	}
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName();
 	}
 	
 	

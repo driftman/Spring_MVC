@@ -3,6 +3,7 @@ package com.bank.manager.metier;
 import java.util.Date;
 import java.util.List;
 
+import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
@@ -17,20 +18,21 @@ public Adresse addAddress(Adresse adresse);
 	
 	public Coordonnee addCoordonnee(Coordonnee coordonnee);
 	
-	public Employee addEmployee(Employee employee, Coordonnee coordonnee, Adresse adresse, Employee sup);
+	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup);
 	public Employee getEmployee(Long id);
 	public List<Employee> rechercherEmployeParMC(String mc);
 	
-	public Client addClient(Client client, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee);
+	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee);
 	public Client getClient(Long id);
 	public List<Client> getActiveClients();
-	public Client acceptClient(Client c);
+	public Client acceptClient(Long code_client);
 	
-	public Compte persistCompte(Compte c);
 	public Compte addCompte(Compte compte, Long code_client, Long code_employe);
 	public Compte getCompte(String codeCompte);
 	public Compte getCompteCodeCompte(String codeCompte);
-	public List<Compte> getCompteByClient(Client c);
+	public List<Compte> getCompteByClient(Long code_client);
+	public List<Compte> getCompteByEmployee(Long code_employee);
+	public List<Compte> getComptesWithMC(String mc);
 	
 	public Operation versement(Operation operation, String code_compte, Long code_employee, double montant);
 	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant);
@@ -41,5 +43,11 @@ public Adresse addAddress(Adresse adresse);
 	public List<Operation> getOperationByEmployee(Employee e);
 	
 	public Tache addNewTicket(Tache ticket, Long employee1, Long employee2, Date releaseDate);
+	
+	public List<Tache> getTickets();
+	public List<Compte> getComptes();
+	public List<Operation> getOperations();
+	public List<Client> getClients();
+	public List<Employee> getEmployees();
 
 }

@@ -1,14 +1,12 @@
 package com.bank.manager.beans;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
@@ -22,6 +20,16 @@ public abstract class Person {
 	@OneToOne(targetEntity=Coordonnee.class, fetch=FetchType.EAGER)
 	@JoinColumn(name="coordonnees", nullable=false)
 	private Coordonnee coordonnee;
+	
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	@OneToOne(targetEntity=Account.class)
+	private Account account;
 	
 	
 	public Person() {

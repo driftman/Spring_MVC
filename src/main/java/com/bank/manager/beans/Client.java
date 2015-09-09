@@ -2,8 +2,6 @@ package com.bank.manager.beans;
 
 import java.util.List;
 
-
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -17,7 +15,7 @@ public class Client extends Person {
 	@OneToMany(targetEntity=Compte.class, mappedBy="client", fetch=FetchType.LAZY)
 	private List<Compte> comptes;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="employee")
 	private Employee employee;
 	

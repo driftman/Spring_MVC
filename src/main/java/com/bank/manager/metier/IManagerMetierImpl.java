@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
@@ -43,9 +44,9 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Coordonnee coordonnee, Adresse adresse, Employee sup) {
+	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup) {
 		// TODO Auto-generated method stub
-		return dao.addEmployee(employee, coordonnee, adresse, sup);
+		return dao.addEmployee(employee, account, coordonnee, adresse, sup);
 	}
 
 	@Override
@@ -75,14 +76,7 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Client acceptClient(Client c) {
-		// TODO Auto-generated method stub
-		return dao.acceptClient(c);
-	}
-
-	@Override
 	public Compte addCompte(Compte compte, Long code_client, Long code_employe) {
-		// TODO Auto-generated method stub
 		return dao.addCompte(compte, code_client, code_employe);
 	}
 
@@ -99,15 +93,14 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public List<Compte> getCompteByClient(Client c) {
+	public List<Compte> getCompteByClient(Long code_client) {
 		// TODO Auto-generated method stub
-		return dao.getCompteByClient(c);
+		return dao.getCompteByClient(code_client);
 	}
 
 	@Override
 	public Operation versement(Operation operation, String code_compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		Employee e = dao.getEmployee(code_employee);
 		Compte c = dao.getCompte(code_compte);
 		c.setSoldeDepart(c.getSoldeDepart()+montant);
 		dao.addOperation(operation, code_compte, code_employee, montant);
@@ -118,7 +111,6 @@ public class IManagerMetierImpl implements IManagerMetier {
 	@Override
 	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		Employee e = dao.getEmployee(code_employee);
 		Compte c = dao.getCompte(code_compte);
 		c.setSoldeDepart(c.getSoldeDepart()-montant);
 		dao.addOperation(operation, code_compte, code_employee, montant);
@@ -162,16 +154,58 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Compte persistCompte(Compte c) {
+	public Client addClient(Client client, Account account, Situation situation,
+			Coordonnee coordonnee, Adresse adresse, Employee employee) {
 		// TODO Auto-generated method stub
-		return dao.persistCompte(c);
+		return dao.addClient(client, account, situation, coordonnee, adresse, employee);
 	}
 
 	@Override
-	public Client addClient(Client client, Situation situation,
-			Coordonnee coordonnee, Adresse adresse, Employee employee) {
+	public Client acceptClient(Long code_client) {
 		// TODO Auto-generated method stub
-		return dao.addClient(client, situation, coordonnee, adresse, employee);
+		return dao.acceptClient(code_client);
+	}
+
+	@Override
+	public List<Tache> getTickets() {
+		// TODO Auto-generated method stub
+		return dao.getTickets();
+	}
+
+	@Override
+	public List<Compte> getComptes() {
+		// TODO Auto-generated method stub
+		return dao.getComptes();
+	}
+
+	@Override
+	public List<Operation> getOperations() {
+		// TODO Auto-generated method stub
+		return dao.getOperations();
+	}
+
+	@Override
+	public List<Client> getClients() {
+		// TODO Auto-generated method stub
+		return dao.getClients();
+	}
+
+	@Override
+	public List<Employee> getEmployees() {
+		// TODO Auto-generated method stub
+		return dao.getEmployees();
+	}
+
+	@Override
+	public List<Compte> getCompteByEmployee(Long code_employee) {
+		// TODO Auto-generated method stub
+		return dao.getCompteByEmployee(code_employee);
+	}
+
+	@Override
+	public List<Compte> getComptesWithMC(String mc) {
+		// TODO Auto-generated method stub
+		return dao.getComptesWithMC(mc);
 	}
 
 }

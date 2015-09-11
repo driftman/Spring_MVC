@@ -16,6 +16,16 @@ public class Coordonnee {
 	private String nom;
 	private String prenom;
 	private Integer age;
+	public Coordonnee(String nom, String prenom, Integer age, String email,
+			Adresse adresse) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.age = age;
+		this.email = email;
+		this.adresse = adresse;
+	}
+
 	private String email;
 	
 	

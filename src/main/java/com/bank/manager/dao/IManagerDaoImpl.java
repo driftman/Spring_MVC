@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -25,7 +26,9 @@ public class IManagerDaoImpl implements IManagerDao{
 	public Adresse addAddress(Adresse adresse) {
 		// TODO Auto-generated method stub
 		if(adresse == null)
-			throw new RuntimeException("NULL REFERENCE NOT ACCEPTED");
+			throw new NullPointerException("NULL REFERENCE NOT ACCEPTED");
+		if(adresse.getCode_postale()<0 || adresse.getNumero_lieu()<0)
+			throw new IllegalArgumentException("CODE POSTALE ET NUMERO LIEU DOIVENT ETRE CORRECTES");
 		else
 		{
 			em.persist(adresse);
@@ -37,10 +40,14 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public Coordonnee addCoordonnee(Coordonnee coordonnee) {
 		// TODO Auto-generated method stub
-		if(coordonnee == null)
-			throw new RuntimeException("NULL REFERENCE NOT ACCEPTED");
+		if(coordonnee.getAdresse() == null)
+			throw new NullPointerException("NULL REFERENCE NOT ACCEPTED");
+		if(coordonnee.getEmail() == "" || coordonnee.getAge() < 16 || coordonnee.getNom() == "" ||
+				coordonnee.getPrenom() == "")
+			throw new IllegalArgumentException("LES INFORMATION DOIVENT ETRE CORRECTES");
 		else
 		{
+			this.addAddress(coordonnee.getAdresse());
 			em.persist(coordonnee);
 			em.flush();
 			return coordonnee;
@@ -51,7 +58,7 @@ public class IManagerDaoImpl implements IManagerDao{
 	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adress, Employee sup) {
 		// TODO Auto-generated method stub
 		if(employee == null || coordonnee == null || adress == null)
-			throw new RuntimeException("NULL REFERENCE NOT ACCEPTED");
+			throw new NullPointerException("NULL REFERENCE NOT ACCEPTED");
 		else
 		{
 			System.out.println("PHASE1");
@@ -60,20 +67,9 @@ public class IManagerDaoImpl implements IManagerDao{
 			if(sup!=null)
 				employee.setSuperieurHierarchique(sup);
 			
-
-			em.persist(account);
-			em.flush();
-			
-			em.persist(adress);
-			em.flush();
-			
-			System.out.println("PHASE2");
 			coordonnee.setAdresse(adress);
-			em.persist(coordonnee);
-			em.flush();
-			System.out.println("PHASE3");
-			employee.setCoordonnee(coordonnee);
-			employee.setAccount(account);
+			employee.setCoordonnee(this.addCoordonnee(coordonnee));
+			employee.setAccount(this.addAccount(account));
 			em.persist(employee);
 			em.flush();
 			return employee;
@@ -95,41 +91,30 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public List<Employee> rechercherEmployeParMC(String mc) {
 		// TODO Auto-generated method stub
-		Query query = em.createQuery("SELECT e FROM Employee e LEFT JOIN e.coordonne as c"
-				+ " WHERE c.nom like :mc OR c.prenom like :mc");
-		query.setParameter("mc", mc);
+		Query query = em.createQuery("SELECT e FROM Employee e LEFT JOIN e.coordonnee as c LEFT JOIN e.account as a"
+				+ " WHERE c.nom like :mc OR c.prenom like :mc OR a.username like :mc ");
+		query.setParameter("mc", "%"+mc+"%");
 		List<Employee> liste = (List<Employee>)query.getResultList();
-		if(liste==null || liste.size() == 0)
+		if(liste.size() == 0)
 			throw new RuntimeException("NO EMPLOYEE MATCH THE CRITERIA YOU SETTED <"+mc+">");
 		return liste;
 	}
 
 	@Override
-	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee) {
+	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Long code_employee) {
 		// TODO Auto-generated method stub
-		if(client == null || employee == null || coordonnee == null || employee == null)
-			throw new RuntimeException(
+		if(client == null || code_employee == null || coordonnee == null)
+			throw new IllegalArgumentException(
 					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL <CLIENT:"+
-			String.valueOf(client==null)+">, <EMPLOYEE:"+String.valueOf(employee==null)+">");
-
-		em.persist(account);
-		em.flush();
+			String.valueOf(client==null)+">, <EMPLOYEE:"+String.valueOf(code_employee==null)+">");
 		
-		em.persist(adresse);
-		em.flush();
-		
-		em.persist(situation);
-		em.flush();
-		
+		Employee e = em.find(Employee.class, code_employee);
 		coordonnee.setAdresse(adresse);
-		em.persist(coordonnee);
-		em.flush();
-		
-		client.setAccount(account);
-		client.setCoordonnee(coordonnee);
-		client.setEmployee(employee);
+		client.setCoordonnee(this.addCoordonnee(coordonnee));
+		client.setAccount(this.addAccount(account));
+		client.setEmployee(e);
+		em.persist(situation);
 		client.setSituation(situation);
-		
 		em.persist(client);
 		em.flush();
 		return client;
@@ -163,31 +148,21 @@ public class IManagerDaoImpl implements IManagerDao{
 	public Compte addCompte(Compte compte, Long code_client, Long code_employee) {
 		// TODO Auto-generated method stub
 		if(compte==null || code_client==null || code_employee==null)
-			throw new RuntimeException(
-					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL "
-					+ "<CLIENT:"+String.valueOf(code_client==null)+">, "
-					+ "<EMPLOYEE:"+String.valueOf(code_employee==null)+">, "
-					+ "<COMPTE:"+String.valueOf(compte==null)+">");
+			throw new IllegalArgumentException(
+					"NULL PROPERTIES");
 		else
 		{
-			Client client = em.find(Client.class, code_client);
-			Employee employee = em.find(Employee.class, code_employee);
-			/*Query q = em.createQuery("INSERT INTO Compte(DTYPE, codeCompte, dateCreation, soldeDepart, client_codeCompte,"
-					+ " employee_id) values(?,?,?,?,?,?) ");
-			q.setParameter(1, "CE");
-			q.setParameter(2, compte.getCodeCompte());
-			q.setParameter(3, compte.getDateCreation());
-			q.setParameter(4, compte.getSoldeDepart());
-			q.setParameter(5, client.getId());
-			q.setParameter(6, employee.getId());
-			q.executeUpdate();*/
-			
-			compte.setClient(client);
-			compte.setEmployee(employee);
-			System.out.println("COMPTE FULL");
-			em.persist(compte);
-			em.flush();
-			return compte;
+			Employee employee ;
+			Client client ;
+				client = em.find(Client.class, code_client);
+				employee = em.find(Employee.class, code_employee);
+				if(client==null || employee==null)
+					throw new IllegalArgumentException("THE EMPLOYEE OR THE CLIENT YOU SETTED ARE NOT FOUND");
+				compte.setClient(client);
+				compte.setEmployee(employee);
+				em.persist(compte);
+				em.flush();
+				return compte;
 		}
 	}
 
@@ -196,17 +171,23 @@ public class IManagerDaoImpl implements IManagerDao{
 		// TODO Auto-generated method stub
 		Query query = em.createQuery("SELECT c FROM Compte c WHERE c.codeCompte = :id");
 		query.setParameter("id", codeCompte);
-		Compte c = (Compte)query.getSingleResult();
-		if(c==null)
-			throw new RuntimeException("COMPTE NOT FOUND !");
-		return c;
+		Compte c = null;
+		try
+		{
+			c = (Compte)query.getSingleResult();
+			return c;
+		}catch(NoResultException e)
+		{
+			throw new IllegalArgumentException("COMPTE NOT FOUND");
+		}
+		
 	}
 
 	@Override
 	public Compte getCompteCodeCompte(String codeCompte) {
 		// TODO Auto-generated method stub
 		Query query = em.createQuery("SELECT c from CompteEpargne c WHERE c.codeCompte like :codeCompte");
-		query.setParameter("codeCompte", "%"+codeCompte+"%");
+		query.setParameter("codeCompte", codeCompte);
 		Compte compte = (Compte)query.getSingleResult();
 		if(compte==null)
 			throw new RuntimeException("COMPTE NOT FOUND !");
@@ -232,16 +213,13 @@ public class IManagerDaoImpl implements IManagerDao{
 			Long code_employee, double somme) {
 		// TODO Auto-generated method stub
 		if(operation==null || code_compte==null || code_employee==null)
-			throw new RuntimeException(
-					"REMEMBER THE CLIENT AND THE EMPLOYEE SHOULD NOT BE NULL "
-					+ "<OPERATION:"+String.valueOf(operation==null)+">, "
-					+ "<EMPLOYEE:"+String.valueOf(code_employee==null)+">, "
-					+ "<COMPTE:"+String.valueOf(code_compte==null)+">");
+			throw new IllegalArgumentException("NULL REFERENCES ARE NOT PERMITTED");
 		Employee e = em.find(Employee.class, code_employee);
 		Compte c = em.find(Compte.class, code_compte);
 		operation.setCompte(c);
 		operation.setEmployee(e);
 		operation.setSomme(somme);
+		System.out.println(operation+" TO : "+c.getCodeCompte());
 		em.persist(operation);
 		em.flush();
 		return operation;
@@ -364,6 +342,18 @@ public class IManagerDaoImpl implements IManagerDao{
 		if(comptes.size()==0)
 			throw new RuntimeException("NO COMPTE FOUND FOR THIS KEYWORD !");
 		return comptes;
+	}
+
+	@Override
+	public Account addAccount(Account account) {
+		// TODO Auto-generated method stub
+		if(account==null || account.getUsername().equals("") || account.getPassword().equals("") 
+				|| account.getSecretPass().equals(""))
+			throw new IllegalArgumentException("THE ACCOUNT FIELD SHOULD BE CORRECT");
+		em.persist(account);
+		em.flush();
+		return account;
+			
 	}
 
 }

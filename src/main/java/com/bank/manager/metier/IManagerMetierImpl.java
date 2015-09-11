@@ -123,6 +123,8 @@ public class IManagerMetierImpl implements IManagerMetier {
 		Compte c = dao.getCompte(code_compte1);
 		if(c.getSoldeDepart()<montant)
 			throw new RuntimeException("PAS DE CREDIT SUFFISANT POUR : "+c.getClient().getCoordonnee().getNom());
+
+		System.out.println("VIREMENT FROM : "+code_compte1+"TO"+code_compte2);
 		this.retrait(new Retrait(), code_compte1, code_employee, montant);
 		this.versement(new Credit(), code_compte2, code_employee, montant);
 		return null;
@@ -155,9 +157,9 @@ public class IManagerMetierImpl implements IManagerMetier {
 
 	@Override
 	public Client addClient(Client client, Account account, Situation situation,
-			Coordonnee coordonnee, Adresse adresse, Employee employee) {
+			Coordonnee coordonnee, Adresse adresse, Long code_employee) {
 		// TODO Auto-generated method stub
-		return dao.addClient(client, account, situation, coordonnee, adresse, employee);
+		return dao.addClient(client, account, situation, coordonnee, adresse, code_employee);
 	}
 
 	@Override
@@ -206,6 +208,12 @@ public class IManagerMetierImpl implements IManagerMetier {
 	public List<Compte> getComptesWithMC(String mc) {
 		// TODO Auto-generated method stub
 		return dao.getComptesWithMC(mc);
+	}
+
+	@Override
+	public Account addAccount(Account account) {
+		// TODO Auto-generated method stub
+		return dao.addAccount(account);
 	}
 
 }

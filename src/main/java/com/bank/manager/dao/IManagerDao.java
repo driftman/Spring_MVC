@@ -19,11 +19,13 @@ public interface IManagerDao {
 	
 	public Coordonnee addCoordonnee(Coordonnee coordonnee);
 	
+	public Account addAccount(Account account);
+	
 	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup);
 	public Employee getEmployee(Long id);
 	public List<Employee> rechercherEmployeParMC(String mc);
 	
-	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Employee employee);
+	public Client addClient(Client client, Account account, Situation situation, Coordonnee coordonnee, Adresse adresse, Long code_employee);
 	public Client getClient(Long id);
 	public List<Client> getActiveClients();
 	public Client acceptClient(Long code_client);

@@ -21,6 +21,7 @@ public abstract class Person {
 	@JoinColumn(name="coordonnees", nullable=false)
 	private Coordonnee coordonnee;
 	
+	@OneToOne(fetch=FetchType.EAGER)
 	public Account getAccount() {
 		return account;
 	}

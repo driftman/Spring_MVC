@@ -123,7 +123,17 @@ public class IManagerDaoImpl implements IManagerDao{
 	@Override
 	public Client getClient(Long id) {
 		// TODO Auto-generated method stub
-		return em.find(Client.class, id);
+		Query query = em.createQuery("SELECT c FROM Client c WHERE c.id = :id");
+		query.setParameter("id",id);
+		try
+		{
+			Client c = (Client)query.getSingleResult();
+			return c;
+		}
+		catch(NoResultException ex)
+		{
+			throw new RuntimeException("CLIENT NOT FOUND !");
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -240,10 +250,13 @@ public class IManagerDaoImpl implements IManagerDao{
 		// TODO Auto-generated method stub
 		Query query = em.createQuery("SELECT o FROM Operation o LEFT JOIN o.compte as compte WHERE compte.id = :id");
 		query.setParameter("id", c.getCodeCompte());
-		List<Operation> operations = (List<Operation>)query.getResultList();
-		if(operations==null || operations.size()==0)
-			throw new RuntimeException("NO OPERATION FOUND FOR THE COMPTE : "+c.getCodeCompte());
-		return operations;
+		try{
+			List<Operation> operations = query.getResultList();
+			return operations;
+		}catch(NoResultException ex)
+		{
+			throw new RuntimeException("NO OPERATION FOUND FOR THIS COMPTE");
+		}
 	}
 
 	@Override
@@ -252,10 +265,15 @@ public class IManagerDaoImpl implements IManagerDao{
 		// TODO Auto-generated method stub
 		Query query = em.createQuery("SELECT o FROM Operation o LEFT JOIN o.employee as employee WHERE employee.id = :id");
 		query.setParameter("id", e.getId());
-		List<Operation> operations = (List<Operation>)query.getResultList();
-		if(operations==null || operations.size()==0)
-			throw new RuntimeException("NO OPERATION FOUND FOR THE EMPLOYEE : "+e.getId());
-		return operations;
+		
+		try{
+			List<Operation> operations = query.getResultList();
+			return operations;
+		}catch(NoResultException ex)
+		{
+			throw new RuntimeException("NO OPERATION FOUND FOR THIS EMPLOYEE");
+		}
+		
 	}
 
 	@Override
@@ -294,7 +312,10 @@ public class IManagerDaoImpl implements IManagerDao{
 	@SuppressWarnings("unchecked")
 	public List<Operation> getOperations() {
 		// TODO Auto-generated method stub
-		return (List<Operation>)em.createQuery("SELECT o FROM Operation o").getResultList();
+		List<Operation> operations = (List<Operation>)em.createQuery("SELECT o FROM Operation o").getResultList();
+		if(operations == null || operations.size() == 0)
+			throw new RuntimeException("There is no operations");
+		return operations;
 	}
 
 	@Override
@@ -354,6 +375,31 @@ public class IManagerDaoImpl implements IManagerDao{
 		em.flush();
 		return account;
 			
+	}
+
+	@Override
+	public void deleteEmployee(Long code_employee) {
+		// TODO Auto-generated method stub
+		Employee e = this.getEmployee(code_employee);
+		em.remove(e);
+		em.flush();
+		
+	}
+
+	@Override
+	public void deleteClient(Long code_client) {
+		// TODO Auto-generated method stub
+		Client client = this.getClient(code_client);
+		em.remove(client);
+		em.flush();
+	}
+
+	@Override
+	public void deleteCompte(String code_compte) {
+		// TODO Auto-generated method stub
+		Compte c = this.getCompte(code_compte);
+		em.remove(c);
+		em.flush();
 	}
 
 }

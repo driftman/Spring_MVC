@@ -52,4 +52,10 @@ public interface IManagerDao {
 	public List<Employee> getEmployees();
 	
 	
+	public void deleteEmployee(Long code_employee);
+	public void deleteClient(Long code_client);
+	
+	public void deleteCompte(String code_compte);
+	
+	
 }

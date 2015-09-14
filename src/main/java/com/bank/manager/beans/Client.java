@@ -2,6 +2,7 @@ package com.bank.manager.beans;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -12,14 +13,14 @@ import javax.persistence.OneToOne;
 @Entity
 public class Client extends Person {
 	
-	@OneToMany(targetEntity=Compte.class, mappedBy="client", fetch=FetchType.LAZY)
+	@OneToMany(targetEntity=Compte.class, mappedBy="client", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<Compte> comptes;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="employee")
 	private Employee employee;
 	
-	@OneToOne(targetEntity=Situation.class, fetch=FetchType.LAZY)
+	@OneToOne(targetEntity=Situation.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="situation", nullable=true, updatable=true)
 	private Situation situation;
 	

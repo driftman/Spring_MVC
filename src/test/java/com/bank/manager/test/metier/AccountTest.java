@@ -1,8 +1,6 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 import java.util.Date;
-
-import javax.validation.ConstraintViolationException;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -35,10 +33,10 @@ public class AccountTest {
 	//You can change the value of username while you attempt to launch this test !
 	//
 	@Parameter
-	private Account completeAccount = new Account("kygo","jUnit","jUnit",new Date());
+	private Account completeAccount = new Account("kygo","jUnit","jUnit");
 	
 	@Parameter
-	private Account incompleteAccount = new Account("","","",new Date());
+	private Account incompleteAccount = new Account("","","");
 	
 	
 	@Rule
@@ -64,7 +62,7 @@ public class AccountTest {
 	public void duplicateUserNameRuntimeExecution()
 	{
 		expectedException.expect(javax.persistence.PersistenceException.class);
-		metier.addAccount(new Account("user", "jUnitTest", "jUnitTest", new Date()));
+		metier.addAccount(new Account("user", "jUnitTest", "jUnitTest"));
 	}
 	
 	

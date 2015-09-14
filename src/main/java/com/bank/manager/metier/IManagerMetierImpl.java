@@ -216,4 +216,24 @@ public class IManagerMetierImpl implements IManagerMetier {
 		return dao.addAccount(account);
 	}
 
+	@Override
+	public void deleteEmployee(Long code_employee) {
+		// TODO Auto-generated method stub
+		dao.deleteEmployee(code_employee);
+	}
+
+	@Override
+	public void deleteClient(Long code_client) {
+		// TODO Auto-generated method stub
+		dao.deleteClient(code_client);
+	}
+
+	@Override
+	public void deleteCompte(String code_compte) {
+		// TODO Auto-generated method stub
+		dao.deleteCompte(code_compte);
+	}
+	
+	
+
 }

@@ -1,4 +1,4 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 import org.junit.Assert;
 import org.junit.Rule;

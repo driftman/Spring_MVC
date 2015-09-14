@@ -16,6 +16,9 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class Account {
+	{
+		this.lastLogin = new Date();
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(updatable=false, unique=true)
@@ -28,12 +31,10 @@ public class Account {
 	{
 		super();
 	}
-	public Account(String username, String password, String secretPass,
-			Date lastLogin) {
+	public Account(String username, String password, String secretPass) {
 		this.username = username;
 		this.password = password;
 		this.secretPass = secretPass;
-		this.lastLogin = lastLogin;
 	}
 	private String secretPass;
 	@Temporal(TemporalType.DATE) @Column(updatable=true, unique=false)

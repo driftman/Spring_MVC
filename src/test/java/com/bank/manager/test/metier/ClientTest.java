@@ -1,4 +1,4 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 import java.util.Date;
 
@@ -46,7 +46,7 @@ public class ClientTest {
 	private Employee employee = new Employee(completeCoordonnee);
 
 	@Parameter
-	private Account completeAccount = new Account("userX", "passwordX", "secretPassX", new Date());
+	private Account completeAccount = new Account("userX", "passwordX", "secretPassX");
 	
 	@Parameter
 	private Situation completeSituation = new Situation("TEST", true, true, 0, true, true);
@@ -68,11 +68,11 @@ public class ClientTest {
 	public void returnedClientNotNull()
 	{
 		metier.addEmployee(new Employee(), 
-				new Account("userY", "passwordX", "secretPassX", new Date()), 
+				new Account("userY", "passwordX", "secretPassX"), 
 				completeCoordonnee, completeAddress, null);
 		metier.addClient(
 				new Client(), 
-				new Account("username", "password", "secretPass", new Date()), 
+				new Account("username", "password", "secretPass"), 
 				new Situation("lettreMotivation", true,true,0,true, true), 
 				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
 				new Adresse("ville", "quartier", 4,4), 

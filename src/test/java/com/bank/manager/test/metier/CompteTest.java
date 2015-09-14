@@ -1,16 +1,14 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,18 +17,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Client;
-import com.bank.manager.beans.Compte;
+import com.bank.manager.beans.CompteCourant;
 import com.bank.manager.beans.CompteEpargne;
 import com.bank.manager.beans.Coordonnee;
 import com.bank.manager.beans.Credit;
 import com.bank.manager.beans.Employee;
-import com.bank.manager.beans.Operation;
-import com.bank.manager.beans.Retrait;
 import com.bank.manager.beans.Situation;
 import com.bank.manager.metier.IManagerMetier;
 
 @RunWith(value=SpringJUnit4ClassRunner.class)
 @ContextConfiguration(value={"file:src/main/resources/application-context.xml"})
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CompteTest {
 	
 	
@@ -53,7 +50,7 @@ public class CompteTest {
 	private Employee employee = new Employee(completeCoordonnee);
 
 	@Parameter
-	private Account completeAccount = new Account("userX", "passwordX", "secretPassX", new Date());
+	private Account completeAccount = new Account("userX", "passwordX", "secretPassX");
 	
 	@Parameter
 	private Situation completeSituation = new Situation("TEST", true, true, 0, true, true);
@@ -73,22 +70,40 @@ public class CompteTest {
 	
 	
 	
-	
-	public void initTest()
+	@Test
+	public void testA()
 	{
 		metier.addEmployee(new Employee(), 
-				new Account("userY", "passwordX", "secretPassX", new Date()), 
-				completeCoordonnee, completeAddress, null);
+				new Account("userY", "passwordX", "secretPassX"), 
+				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
+				new Adresse("ville", "quartier", 4,4), null);
+		
 		metier.addClient(
 				new Client(), 
-				new Account("username", "password", "secretPass", new Date()), 
+				new Account("username1", "password", "secretPass"), 
 				new Situation("lettreMotivation", true,true,0,true, true), 
 				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
 				new Adresse("ville", "quartier", 4,4), 
 				1L);
+		
+		metier.addEmployee(new Employee(), 
+				new Account("userZ", "passwordX", "secretPassX"), 
+				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
+				new Adresse("ville", "quartier", 4,4), null);
+		
+		metier.addClient(
+				new Client(), 
+				new Account("username2", "password", "secretPass"), 
+				new Situation("lettreMotivation", true,true,0,true, true), 
+				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
+				new Adresse("ville", "quartier", 4,4), 
+				1L);
+		metier.addCompte(new CompteEpargne("CE1", 175000), 2L, 1L);
+		metier.addCompte(new CompteEpargne("CE2", 0.0), 2L, 1L);
+		
 	}
 	@org.junit.Test
-	public void illegalArgumentException1()
+	public void testB()
 	{
 		exception.expect(IllegalArgumentException.class);
 		exception.expectMessage("THE EMPLOYEE OR THE CLIENT YOU SETTED ARE NOT FOUND");
@@ -96,7 +111,7 @@ public class CompteTest {
 	}
 	
 	@org.junit.Test
-	public void illegalArgumentException2()
+	public void testC()
 	{
 		exception.expect(IllegalArgumentException.class);
 		exception.expectMessage("NULL PROPERTIES");
@@ -106,14 +121,14 @@ public class CompteTest {
 	}
 	
 	@org.junit.Test
-	public void returnedNotNullAfterPersist()
+	public void testD()
 	{
 		Assert.assertNotNull(metier.getCompte("CE1"));
 		Assert.assertNotNull(metier.getCompte("CE2"));
 	}
 	
 	@org.junit.Test
-	public void getCompteTest()
+	public void testE()
 	{
 		Assert.assertNotNull(metier.getCompte("CE1"));
 		Assert.assertNotNull(metier.getCompte("CE1").getEmployee());
@@ -137,7 +152,7 @@ public class CompteTest {
 		
 		*/
 	@Test
-	public void setSomeOperationToCompte()
+	public void testF()
 	{
 		exception.expect(IllegalArgumentException.class);
 		exception.expectMessage("COMPTE NOT FOUND");
@@ -147,7 +162,7 @@ public class CompteTest {
 	}
 	
 	@Test
-	public void gatheringOperations()
+	public void testG()
 	{
 		Assert.assertEquals(Double.doubleToLongBits(175000), Double.doubleToLongBits(metier.getCompte("CE1").getSoldeDepart()));
 		Assert.assertEquals(Double.doubleToLongBits(0.0), Double.doubleToLongBits(metier.getCompte("CE2").getSoldeDepart()));
@@ -167,13 +182,52 @@ public class CompteTest {
 	}
 	
 	@Test
-	public void runtimeExceptionVirement()
+	public void testH()
 	{
 		exception.expect(RuntimeException.class);
 		exception.expectMessage("PAS DE CREDIT SUFFISANT POUR : "+metier.getCompte("CE1").getClient().getCoordonnee().getNom());
 		metier.virement("CE1", "CE2", 1L, 175000);
 	}
 	
+	
+	@Test
+	public void testI()
+	{
+		Assert.assertEquals(3, metier.getOperationByCompte(metier.getCompte("CE1")).size());
+		Assert.assertEquals(3, metier.getOperationByCompte(metier.getCompte("CE2")).size());
+	}
+	
+	@Test
+	public void testJ()
+	{
+		
+		Assert.assertEquals(6, metier.getOperationByEmployee(metier.getEmployee(1L)).size());
+		metier.addCompte(new CompteCourant("CEE", 0.0), 2L, 1L);
+	}
+	
+	@Test
+	public void testK()
+	{
+		
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("NO OPERATION FOUND FOR THIS COMPTE");
+		metier.getOperationByCompte(metier.getCompte("CEE"));
+	}
+	
+	@Test
+	public void testL()
+	{
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("NO OPERATION FOUND FOR THIS EMPLOYEE");
+		metier.getOperationByEmployee(metier.getEmployee(3L));
+	}
+	
+	@Test
+	public void testM()
+	{
+		metier.deleteEmployee(1L);
+		metier.deleteEmployee(3L);
+	}
 	
 	
 	

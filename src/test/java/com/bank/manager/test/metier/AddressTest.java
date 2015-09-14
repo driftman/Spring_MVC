@@ -1,6 +1,6 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
-import junit.framework.Assert;
+import junit.framework.*;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,6 +52,7 @@ public class AddressTest {
 		
 	}
 	@Test
+	@SuppressWarnings(value="deprecation")
 	public void returnedAddressNotNull()
 	{
 		Assert.assertNotNull(metier.addAddress(notNullAddressParam));

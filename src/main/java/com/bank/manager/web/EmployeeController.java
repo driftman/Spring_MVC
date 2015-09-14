@@ -3,6 +3,8 @@ package com.bank.manager.web;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
+import com.bank.manager.beans.Account;
+import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Compte;
+import com.bank.manager.beans.Coordonnee;
+import com.bank.manager.beans.Employee;
 import com.bank.manager.metier.IManagerMetier;
 import com.bank.manager.models.EmployeeModel;
 
@@ -33,19 +41,41 @@ public class EmployeeController {
 	@RequestMapping(value="/ajouter", method=RequestMethod.GET)
 	public String ajouterEmployeeGET(Model model)
 	{
+		
 		EmployeeModel employeeModel = new EmployeeModel();
 		model.addAttribute("employeeModel", employeeModel);
 		return "employee/add";
 	}
 	
 	@RequestMapping(value="/ajouter", method=RequestMethod.POST)
-	@ResponseBody
-	public String ajouterEmployeePOST(@ModelAttribute("employeeModel") @Valid EmployeeModel employeeModel, BindingResult bindingResult, Model model)
+	public ModelAndView ajouterEmployeePOST(@ModelAttribute("employeeModel") @Valid EmployeeModel employeeModel, BindingResult bindingResult, Model model)
 	{
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("employee/add");
 		if(bindingResult.hasErrors())
-			return null;
-		System.out.println(employeeModel);
-		return employeeModel.toString();
+		{
+			mav.addObject("flashs", Arrays.asList(new String[]{"Erreur","Les entrées sont invalides ..."}));
+			return mav;
+		}
+		
+		Adresse address = new Adresse(employeeModel.getVille(), employeeModel.getQuartier(), 
+				employeeModel.getCode_postale(), employeeModel.getNumero_lieu());
+		Coordonnee coordonnee = new Coordonnee(employeeModel.getNom(), employeeModel.getPrenom(), 
+				employeeModel.getAge(), employeeModel.getEmail());
+		Account account = new Account(employeeModel.getUsername(), employeeModel.getPassword(), 
+				employeeModel.getSecret_pass());
+		Employee employee = new Employee();
+		try
+		{
+			metier.addEmployee(employee, account, coordonnee, address, null);
+			mav.addObject("flashs", Arrays.asList(new String[]{"Succes","Employee ajoute avec succes ..."}));
+			
+		}
+		catch(Exception ex)
+		{
+			mav.addObject("flashs", Arrays.asList(new String[]{"Erreur",ex.getMessage()}));
+		}
+		return mav;
 	}
 	
 	@RequestMapping(value="comptes", method=RequestMethod.GET)
@@ -56,12 +86,12 @@ public class EmployeeController {
 		}
 		catch(Exception e)
 		{
-			model.addAttribute("flags",Arrays.asList(new String[]{"Erreur",e.getMessage(),}));
+			model.addAttribute("flashs",Arrays.asList(new String[]{"Erreur",e.getMessage(),}));
 		}
 		return "employee/comptes";
 	}
 	@RequestMapping(value="comptes/search", method=RequestMethod.POST)
-	public String searchCompteWithMC(@RequestParam(name="mc", defaultValue="CE3") String mc, Model model)
+	public String searchCompteWithMC(@RequestParam(name="mc") String mc, Model model)
 	{
 		try
 		{
@@ -69,7 +99,7 @@ public class EmployeeController {
 		}
 		catch(Exception e)
 		{
-			model.addAttribute("flag", e.getMessage());
+			model.addAttribute("flashs",Arrays.asList(new String[]{"Erreur",e.getMessage()}));
 		}
 		return "employee/comptes";
 	}

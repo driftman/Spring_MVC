@@ -1,4 +1,4 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 import java.util.Date;
 import java.util.List;
@@ -41,7 +41,7 @@ public class EmployeeTest {
 	private Employee employee = new Employee(completeCoordonnee);
 	
 	@Parameter
-	private Account completeAccount = new Account("userX", "passwordX", "secretPassX", new Date());
+	private Account completeAccount = new Account("userX", "passwordX", "secretPassX");
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -59,7 +59,7 @@ public class EmployeeTest {
 	public void returnedValueNotNullException()
 	{
 	
-		Assert.assertNotNull(metier.addEmployee(new Employee(), new Account("userY", "passwordX", "secretPassX", new Date()), 
+		Assert.assertNotNull(metier.addEmployee(new Employee(), new Account("userY", "passwordX", "secretPassX"), 
 				completeCoordonnee, completeAddress, null));
 	}
 	
@@ -78,7 +78,7 @@ public class EmployeeTest {
 	@Test
 	 public void findEmployeeWithMC()
 	 {
-		 metier.addEmployee(new Employee(), new Account("userZ", "passwordX", "secretPassX", new Date()), 
+		 metier.addEmployee(new Employee(), new Account("userZ", "passwordX", "secretPassX"), 
 					completeCoordonnee, completeAddress, null);
 		 List<Employee> employees = metier.rechercherEmployeParMC("JOHN");
 		 Assert.assertTrue((employees.size() >= 1));

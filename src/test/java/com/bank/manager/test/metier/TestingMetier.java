@@ -1,26 +1,18 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.bank.manager.beans.Adresse;
-import com.bank.manager.beans.TestingTools;
 import com.bank.manager.metier.IManagerMetier;
-import com.bank.manager.metier.IManagerMetierImpl;
 
 
 @RunWith(value=SpringJUnit4ClassRunner.class)

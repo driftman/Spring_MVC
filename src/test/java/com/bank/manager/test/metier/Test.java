@@ -1,4 +1,4 @@
-package com.bank.manager.test;
+package com.bank.manager.test.metier;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

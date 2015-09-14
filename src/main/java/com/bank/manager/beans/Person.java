@@ -1,7 +1,7 @@
 package com.bank.manager.beans;
 
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,11 +17,14 @@ public abstract class Person {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@OneToOne(targetEntity=Coordonnee.class, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=Coordonnee.class, fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="coordonnees", nullable=false)
 	private Coordonnee coordonnee;
 	
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=Account.class, fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Account account;
+	
+	
 	public Account getAccount() {
 		return account;
 	}
@@ -29,8 +32,7 @@ public abstract class Person {
 		this.account = account;
 	}
 
-	@OneToOne(targetEntity=Account.class)
-	private Account account;
+	
 	
 	
 	public Person() {

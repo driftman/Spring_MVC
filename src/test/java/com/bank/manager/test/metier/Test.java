@@ -32,17 +32,18 @@ public class Test {
 //		{
 //			System.out.println(ex.getMessage());
 //		}
-		
+		metier.virement(metier.getCompte("CE2"), metier.getCompte("CE1"), 1L, 2000);
 		//Compte compte = metier.getCompteCodeCompte("CEE1");
 		//System.out.println(compte);
-		metier.versement(new Credit(), "CE2", 1L, 200000);
+//		metier.versement(new Credit(), "CE1", 1L, 200000);
+//		metier.retrait(new Retrait(), metier.getCompte("CE1"), 1L, 200);
 //		
 //		
-//		
+////		
 //		CompteEpargne ce = new CompteEpargne();
 //		ce.setCodeCompte("CE2");
 //		ce.setSoldeDepart(20000);
-//		metier.addCompte(ce, 4L, 1L);
+//		metier.addCompte(ce, 2L, 1L);
 		
 //		 Employee employee = new Employee();
 //		 Adresse adresse = new Adresse("MEKNES", "4, rue AHMED DIGHOUSSI ZITOUNE", 60000, 4);
@@ -55,25 +56,21 @@ public class Test {
 //		
 //		Coordonnee coordonnee = new Coordonnee("JOHN", "DOE", 99, "john.doe@gmail.com");
 //		
-//		Account account = new Account("client1", "password", "password", null);
+//		Account account = new Account("client1", "password", "password");
 //		
 //		Situation situation = new Situation("SVP",true,false,30000,false,true);
 //		
-//		Employee responsableDuClient = metier.getEmployee(2L);
+//		metier.addClient(c, account, situation, coordonnee, adresse, 1L);
 //		
-//		System.out.println(responsableDuClient.getCoordonnee().getAdresse());
-//		
-//		metier.addClient(c, account, situation, coordonnee, adresse, responsableDuClient);
-		
-		 
+//		 
 //		 Employee employee = new Employee();
 //		 Adresse adresse = new Adresse("MEKNES", "4, rue AHMED DIGHOUSSI ZITOUNE", 60000, 4);
 //		 Coordonnee coordonnee = new Coordonnee("Soufiane", "ELBAZ", 23, "elbaz.soufiane92@gmail.com");
 //		 coordonnee.setAdresse(adresse);
 //		 employee.setCoordonnee(coordonnee);
-//		 Account account = new Account("admin", "password", "password", null);
+//		 Account account = new Account("admin", "password", "password");
 //		 employee.setAccount(account);
-//		 metier.addEmployee(employee, null);
+//		 metier.addEmployee(employee,account, coordonnee, adresse, null);
 		
 		//metier.addClient(c, situation, coordonnee, adresse, responsableDuClient);
 		

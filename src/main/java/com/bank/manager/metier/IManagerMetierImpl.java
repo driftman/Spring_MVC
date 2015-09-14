@@ -99,34 +99,27 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Operation versement(Operation operation, String code_compte, Long code_employee, double montant) {
+	public Operation versement(Operation operation, Compte compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		Compte c = dao.getCompte(code_compte);
-		c.setSoldeDepart(c.getSoldeDepart()+montant);
-		dao.addOperation(operation, code_compte, code_employee, montant);
+		compte.setSoldeDepart(compte.getSoldeDepart()+montant);
+		dao.addOperation(operation, compte, code_employee, montant);
 		return operation;
+		
 		
 	}
 
 	@Override
-	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant) {
+	public Operation retrait(Operation operation, Compte compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		Compte c = dao.getCompte(code_compte);
-		c.setSoldeDepart(c.getSoldeDepart()-montant);
-		dao.addOperation(operation, code_compte, code_employee, montant);
+		compte.setSoldeDepart(compte.getSoldeDepart()-montant);
+		dao.addOperation(operation, compte, code_employee, montant);
 		return operation;
 	}
 
 	@Override
-	public Operation virement(String code_compte1, String code_compte2, Long code_employee, double montant) {
-		// TODO Auto-generated method stub
-		Compte c = dao.getCompte(code_compte1);
-		if(c.getSoldeDepart()<montant)
-			throw new RuntimeException("PAS DE CREDIT SUFFISANT POUR : "+c.getClient().getCoordonnee().getNom());
-
-		System.out.println("VIREMENT FROM : "+code_compte1+"TO"+code_compte2);
-		this.retrait(new Retrait(), code_compte1, code_employee, montant);
-		this.versement(new Credit(), code_compte2, code_employee, montant);
+	public Operation virement(Compte compte1, Compte compte2, Long code_employee, double montant) {
+		this.retrait(new Retrait(), compte1, code_employee, montant);
+		this.versement(new Credit(), compte2, code_employee, montant);
 		return null;
 	}
 

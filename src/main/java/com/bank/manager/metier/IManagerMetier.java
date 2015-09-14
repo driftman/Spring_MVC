@@ -34,9 +34,9 @@ public Adresse addAddress(Adresse adresse);
 	public List<Compte> getCompteByEmployee(Long code_employee);
 	public List<Compte> getComptesWithMC(String mc);
 	
-	public Operation versement(Operation operation, String code_compte, Long code_employee, double montant);
-	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant);
-	public Operation virement(String code_compte1, String code_compte2, Long code_employee, double montant);
+	public Operation versement(Operation operation, Compte compte, Long code_employee, double montant);
+	public Operation retrait(Operation operation, Compte compte, Long code_employee, double montant);
+	public Operation virement(Compte compte1, Compte compte2, Long code_employee, double montant);
 	
 	public Operation getOperation(Long id);
 	public List<Operation> getOperationByCompte(Compte c);

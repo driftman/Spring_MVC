@@ -38,7 +38,7 @@ public interface IManagerDao {
 	public List<Compte> getCompteByEmployee(Long code_employee);
 	
 	
-	public Operation addOperation(Operation operation, String code_compte, Long code_employee, double montant);
+	public Operation addOperation(Operation operation, Compte compte, Long code_employee, double montant);
 	public Operation getOperation(Long id);
 	
 	public List<Operation> getOperationByCompte(Compte c);

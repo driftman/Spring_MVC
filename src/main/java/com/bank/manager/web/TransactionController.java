@@ -50,7 +50,7 @@ public class TransactionController {
 			Model model, HttpServletRequest request)
 	{
 		try {
-			metier.virement(from, to, 1L, Double.parseDouble(somme));
+			metier.virement(metier.getCompte(from), metier.getCompte(to), 1L, Double.parseDouble(somme));
 		}
 		catch(Exception ex)
 		{

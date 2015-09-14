@@ -219,17 +219,16 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Operation addOperation(Operation operation, String code_compte,
+	public Operation addOperation(Operation operation, Compte compte,
 			Long code_employee, double somme) {
 		// TODO Auto-generated method stub
-		if(operation==null || code_compte==null || code_employee==null)
+		if(operation==null || compte==null || code_employee==null)
 			throw new IllegalArgumentException("NULL REFERENCES ARE NOT PERMITTED");
 		Employee e = em.find(Employee.class, code_employee);
-		Compte c = em.find(Compte.class, code_compte);
-		operation.setCompte(c);
+		operation.setCompte(compte);
 		operation.setEmployee(e);
 		operation.setSomme(somme);
-		System.out.println(operation+" TO : "+c.getCodeCompte());
+		System.out.println(operation+" TO : "+compte.getCodeCompte());
 		em.persist(operation);
 		em.flush();
 		return operation;

@@ -7,7 +7,7 @@
 	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:aop="http://www.springframework.org/schema/aop"
-        
+    xmlns:security="http://www.springframework.org/schema/security"    
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
@@ -15,7 +15,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	<mvc:annotation-driven enable-matrix-variables="true"/>
 	<mvc:annotation-driven>
@@ -27,19 +29,74 @@
 		    </bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-	<context:component-scan base-package="com.bank.manager.test.controllers"></context:component-scan>
 	
-	<bean name="dao" class="com.bank.manager.dao.IManagerDaoImpl"></bean>
-	<bean name="metier" class="com.bank.manager.metier.IManagerMetierImpl">
+	
+	<security:http pattern="/public/**" security="none"/>
+	<security:http pattern="/login*" security="none"/>
+	 
+	<security:http use-expressions="false">
+		<security:intercept-url pattern="/**" access="ROLE_USER"/>
+		<security:form-login 
+		
+		login-page="/login"
+		username-parameter="username"
+		password-parameter="password"
+		default-target-url="/employee/ajouter"
+		always-use-default-target="true"
+		authentication-failure-url="/login?error"
+		login-processing-url="/j_spring_security_check"
+		
+		/>
+		<security:logout 
+		logout-success-url="/login"
+		logout-url="/j_spring_security_logout"
+		/>
+		<security:csrf disabled="true"/>
+	</security:http>
+	 
+	
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="springDaoAuthentication"/>
+	</security:authentication-manager>
+	
+	
+	<bean id="springDaoAuthentication" class="com.bank.manager.configs.SpringSecurityDaoAuthentication">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="enableAuthorities" value="true"></property>
+		<property name="enableGroups" value="false"></property>
+		<property name="buisiness" ref="metier"></property>
+	</bean>
+	
+	<bean id="dao" class="com.bank.manager.dao.IManagerDaoImpl"></bean>
+	<bean id="metier" class="com.bank.manager.metier.IManagerMetierImpl">
 		<property name="dao" ref="dao"></property>
 	</bean>
-	<bean name="myAspect" class="com.bank.manager.aspects.ServiceAspect">
+	<bean id="sessionBean" class="com.bank.manager.beans.SessionBean" 
+	scope="session">
+		<aop:scoped-proxy/>
 	</bean>
-	<tx:advice id="txAdvice">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED"/>
-		</tx:attributes>
-	</tx:advice>
+	
+	<bean id="customAdvice" class="com.bank.manager.interceptors.CustomAdvisor">
+		<aop:scoped-proxy/>
+	</bean>
+	
+	<bean id="metierService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+			<property name="target" ref="metier"></property>
+			<property name="proxyInterfaces" value="com.bank.manager.metier.IManagerMetier"></property>
+			<property name="transactionManager" ref="transactionManager"></property>
+			<property name="transactionAttributes">
+				<props>
+					<prop key="*">PROPAGATION_REQUIRED</prop>
+				</props>
+			</property>
+	</bean>
+	
+	<bean id="virementAdvisor" class="com.bank.manager.interceptors.VirementAdvisor"></bean>
+	<aop:config>
+		<aop:pointcut expression="pointcuts.SystemArchitecture.virement()" id="pointCut"/>
+		<aop:advisor advice-ref="virementAdvisor" pointcut-ref="pointCut"/>
+	</aop:config>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
 	<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="username" value="root"></property>
@@ -64,6 +121,7 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"></property>
     </bean>
+    <context:component-scan base-package="com.bank.manager" 
+    scoped-proxy="targetClass"></context:component-scan>
     <context:annotation-config/>
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>

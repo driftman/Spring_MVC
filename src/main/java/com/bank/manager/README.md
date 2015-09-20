@@ -1,0 +1,1 @@
+It is a little demonstration of using SpringAOP and AspectJ if someday you are facing a project and you do not have the hand in the Buisiness or Service layer then the Aspect Oriented Programming is the right tool for you take a look at the hole training directory, you can run the project from Run.java 

@@ -15,7 +15,9 @@ import com.bank.manager.beans.Tache;
 
 public interface IManagerMetier {
 public Adresse addAddress(Adresse adresse);
-	
+	public void test();
+
+
 	public Coordonnee addCoordonnee(Coordonnee coordonnee);
 	public Account addAccount(Account account);
 	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup);
@@ -34,9 +36,9 @@ public Adresse addAddress(Adresse adresse);
 	public List<Compte> getCompteByEmployee(Long code_employee);
 	public List<Compte> getComptesWithMC(String mc);
 	
-	public Operation versement(Operation operation, Compte compte, Long code_employee, double montant);
-	public Operation retrait(Operation operation, Compte compte, Long code_employee, double montant);
-	public Operation virement(Compte compte1, Compte compte2, Long code_employee, double montant);
+	public Operation versement(Operation operation, String compte, Long code_employee, double montant);
+	public Operation retrait(Operation operation, String compte, Long code_employee, double montant);
+	public Operation virement(String compte1, String compte2, Long code_employee, double montant);
 	
 	public Operation getOperation(Long id);
 	public List<Operation> getOperationByCompte(Compte c);
@@ -55,5 +57,8 @@ public Adresse addAddress(Adresse adresse);
 	public void deleteClient(Long code_client);
 	
 	public void deleteCompte(String code_compte);
+	
+	public Account findAccountByUsername(String username);
+	public String[] loadUserAuthorities(String username);
 
 }

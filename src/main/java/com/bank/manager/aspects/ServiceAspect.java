@@ -23,7 +23,8 @@ import com.bank.manager.metier.IManagerMetier;
 @Aspect
 @Component
 public class ServiceAspect {
-	private long t1;
+	/*private long t1;
+	private long tVirement;
 	@Autowired
 	private IManagerMetier metier;
 	
@@ -121,6 +122,7 @@ public class ServiceAspect {
 	public Operation virementExec(ProceedingJoinPoint joinPoint, Compte compte1, Compte compte2, Long code_employee, double montant) throws
 	Throwable
 	{
+		tVirement = System.currentTimeMillis();
 		System.out.println("************AspectJ*********");
 		System.out.println("UN VIREMENT DE : "+compte1.getCodeCompte()+" A : "+compte2.getCodeCompte()+" est "
 				+ "au point de commencer !");
@@ -132,12 +134,13 @@ public class ServiceAspect {
 		System.out.println(" COMPTE CREDITEUR [ solde après virement => "+compte1.getSoldeDepart()+"]");
 		System.out.println(" COMPTE DEBITEUR [ solde après virement => "+compte2.getSoldeDepart()+"]");
 		System.out.println("OPERATIONS DE VIREMENTS TERMINEES ! ");
+		System.out.println("ELAPSED Time ==> "+(System.currentTimeMillis()-tVirement)/1000+" s");
 		System.out.println("************AspectJ*********");
 		return null;
 	}
 	
 	
 	
-	
+	*/
 
 }

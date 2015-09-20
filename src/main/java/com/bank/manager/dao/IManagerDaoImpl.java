@@ -8,8 +8,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
+import com.bank.manager.beans.Authority;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
@@ -17,6 +20,7 @@ import com.bank.manager.beans.Employee;
 import com.bank.manager.beans.Operation;
 import com.bank.manager.beans.Situation;
 import com.bank.manager.beans.Tache;
+
 
 public class IManagerDaoImpl implements IManagerDao{
 	@PersistenceContext
@@ -399,6 +403,47 @@ public class IManagerDaoImpl implements IManagerDao{
 		Compte c = this.getCompte(code_compte);
 		em.remove(c);
 		em.flush();
+	}
+
+	@Override
+	public Account findAccountByUsername(String username) {
+		// TODO Auto-generated method stub
+		Query query = em.createQuery("SELECT a FROM Account a WHERE a.username = :username");
+		query.setParameter("username", username);
+		try
+		{
+			Account account = (Account)query.getSingleResult();
+			if(account == null)
+				throw new RuntimeException("Nom d'utilisateur ou mot de passe incorrect !");
+			return account;
+		}catch(Exception e)
+		{
+			throw new RuntimeException("Nom d'utilisateur ou mot de passe incorrect !");
+		}
+		
+	}
+
+	@Override
+	public String[] loadUserAuthorities(String username) {
+		// TODO Auto-generated method stub
+		Query query = em.createQuery("SELECT a from Authority a WHERE a.username = :username");
+		query.setParameter("username", username);
+		try
+		{
+			List<Authority> authsObjects = (List<Authority>)query.getResultList();
+			if(authsObjects.size() <= 0)
+				throw new RuntimeException("THIS USER NAME HAVE NO AUTHORITY !");
+			String[] authsValues = new String[authsObjects.size()];
+			for(int i = 0 ; i < authsObjects.size() ; i++)
+				authsValues[i] = ((Authority)authsObjects.get(i)).getAuthority();
+			return authsValues;
+				
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException("THIS USER NAME HAVE NO AUTHORITY !");
+		}
+		
 	}
 
 }

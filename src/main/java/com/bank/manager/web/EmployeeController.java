@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
 import com.bank.manager.beans.Employee;
+import com.bank.manager.beans.SessionBean;
 import com.bank.manager.metier.IManagerMetier;
 import com.bank.manager.models.EmployeeModel;
 
@@ -35,15 +37,16 @@ import com.bank.manager.models.EmployeeModel;
 @RequestMapping(value="/employee")
 public class EmployeeController {
 	
+
+
 	@Autowired
 	private IManagerMetier metier;
-	
 	@RequestMapping(value="/ajouter", method=RequestMethod.GET)
-	public String ajouterEmployeeGET(Model model)
+	public String ajouterEmployeeGET(Model model, HttpServletRequest request)
 	{
-		
 		EmployeeModel employeeModel = new EmployeeModel();
 		model.addAttribute("employeeModel", employeeModel);
+		request.getSession().setAttribute("test", "passed");
 		return "employee/add";
 	}
 	
@@ -91,10 +94,11 @@ public class EmployeeController {
 		return "employee/comptes";
 	}
 	@RequestMapping(value="comptes/search", method=RequestMethod.POST)
-	public String searchCompteWithMC(@RequestParam(name="mc") String mc, Model model)
+	public String searchCompteWithMC(@RequestParam(value="mc", defaultValue="CE2") String mc, Model model)
 	{
 		try
 		{
+			
 			model.addAttribute("comptes", metier.getComptesWithMC(mc));
 		}
 		catch(Exception e)

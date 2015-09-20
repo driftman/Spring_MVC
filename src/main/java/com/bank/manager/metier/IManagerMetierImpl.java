@@ -6,6 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 
 import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
@@ -97,29 +98,31 @@ public class IManagerMetierImpl implements IManagerMetier {
 		// TODO Auto-generated method stub
 		return dao.getCompteByClient(code_client);
 	}
-
 	@Override
-	public Operation versement(Operation operation, Compte compte, Long code_employee, double montant) {
+	public Operation versement(Operation operation, String compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
-		compte.setSoldeDepart(compte.getSoldeDepart()+montant);
-		dao.addOperation(operation, compte, code_employee, montant);
+		Compte c = this.getCompte(compte);
+		c.setSoldeDepart(c.getSoldeDepart()+montant);
+		dao.addOperation(operation, c, code_employee, montant);
 		return operation;
 		
 		
 	}
 
 	@Override
-	public Operation retrait(Operation operation, Compte compte, Long code_employee, double montant) {
+	public Operation retrait(Operation operation, String code_compte, Long code_employee, double montant) {
 		// TODO Auto-generated method stub
+		Compte compte = this.getCompte(code_compte);
 		compte.setSoldeDepart(compte.getSoldeDepart()-montant);
 		dao.addOperation(operation, compte, code_employee, montant);
 		return operation;
 	}
 
+	
 	@Override
-	public Operation virement(Compte compte1, Compte compte2, Long code_employee, double montant) {
-		this.retrait(new Retrait(), compte1, code_employee, montant);
-		this.versement(new Credit(), compte2, code_employee, montant);
+	public Operation virement(String code_compte1, String code_compte2, Long code_employee, double montant) {
+		this.retrait(new Retrait(), code_compte1, code_employee, montant);
+		this.versement(new Credit(), code_compte2, code_employee, montant);
 		return null;
 	}
 
@@ -225,6 +228,24 @@ public class IManagerMetierImpl implements IManagerMetier {
 	public void deleteCompte(String code_compte) {
 		// TODO Auto-generated method stub
 		dao.deleteCompte(code_compte);
+	}
+
+	@Override
+	public void test() {
+		// TODO Auto-generated method stub
+		System.out.println("TEST PASSED !");
+	}
+
+	@Override
+	public Account findAccountByUsername(String username) {
+		// TODO Auto-generated method stub
+		return dao.findAccountByUsername(username);
+	}
+
+	@Override
+	public String[] loadUserAuthorities(String username) {
+		// TODO Auto-generated method stub
+		return dao.loadUserAuthorities(username);
 	}
 	
 	

@@ -57,5 +57,8 @@ public interface IManagerDao {
 	
 	public void deleteCompte(String code_compte);
 	
+	public Account findAccountByUsername(String username);
+	public String[] loadUserAuthorities(String username);
+	
 	
 }

@@ -156,7 +156,7 @@ public class CompteTest {
 	{
 		exception.expect(IllegalArgumentException.class);
 		exception.expectMessage("COMPTE NOT FOUND");
-		metier.versement(new Credit(), metier.getCompte("CEX"), null, 0.0);
+		metier.versement(new Credit(), "CEX", null, 0.0);
 		
 		
 	}
@@ -167,13 +167,13 @@ public class CompteTest {
 		Assert.assertEquals(Double.doubleToLongBits(175000), Double.doubleToLongBits(metier.getCompte("CE1").getSoldeDepart()));
 		Assert.assertEquals(Double.doubleToLongBits(0.0), Double.doubleToLongBits(metier.getCompte("CE2").getSoldeDepart()));
 		
-		Assert.assertNotNull(metier.versement(new Credit(), metier.getCompte("CE2"), 1L, 25000));
-		Assert.assertNotNull(metier.versement(new Credit(), metier.getCompte("CE2"), 1L, 50000));
-		Assert.assertNotNull(metier.versement(new Credit(), metier.getCompte("CE2"), 1L, 100000));
+		Assert.assertNotNull(metier.versement(new Credit(), "CE2", 1L, 25000));
+		Assert.assertNotNull(metier.versement(new Credit(), "CE2", 1L, 50000));
+		Assert.assertNotNull(metier.versement(new Credit(), "CE2", 1L, 100000));
 		
-		Assert.assertNotNull(metier.retrait(new Credit(), metier.getCompte("CE1"), 1L, 100000));
-		Assert.assertNotNull(metier.retrait(new Credit(), metier.getCompte("CE1"), 1L, 50000));
-		Assert.assertNotNull(metier.retrait(new Credit(), metier.getCompte("CE1"), 1L, 25000));
+		Assert.assertNotNull(metier.retrait(new Credit(), "CE1", 1L, 100000));
+		Assert.assertNotNull(metier.retrait(new Credit(), "CE1", 1L, 50000));
+		Assert.assertNotNull(metier.retrait(new Credit(), "CE1", 1L, 25000));
 		
 		Assert.assertEquals(Double.doubleToLongBits(175000), Double.doubleToLongBits(metier.getCompte("CE2").getSoldeDepart()));
 		Assert.assertEquals(Double.doubleToLongBits(0.0), Double.doubleToLongBits(metier.getCompte("CE1").getSoldeDepart()));
@@ -186,7 +186,7 @@ public class CompteTest {
 	{
 		exception.expect(RuntimeException.class);
 		exception.expectMessage("PAS DE CREDIT SUFFISANT POUR : "+metier.getCompte("CE1").getClient().getCoordonnee().getNom());
-		metier.virement(metier.getCompte("CE1"),metier.getCompte("CE2"), 1L, 175000);
+		metier.virement("CE1","CE2", 1L, 175000);
 	}
 	
 	

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +27,9 @@ import com.bank.manager.beans.Adresse;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
 import com.bank.manager.beans.Employee;
+import com.bank.manager.beans.Person;
 import com.bank.manager.beans.SessionBean;
+import com.bank.manager.configs.CustomUser;
 import com.bank.manager.metier.IManagerMetier;
 import com.bank.manager.models.EmployeeModel;
 
@@ -44,6 +47,9 @@ public class EmployeeController {
 	@RequestMapping(value="/ajouter", method=RequestMethod.GET)
 	public String ajouterEmployeeGET(Model model, HttpServletRequest request)
 	{
+		CustomUser user = ((CustomUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		Person p = user.getPerson();
+		System.out.println(p);
 		EmployeeModel employeeModel = new EmployeeModel();
 		model.addAttribute("employeeModel", employeeModel);
 		request.getSession().setAttribute("test", "passed");
@@ -53,6 +59,7 @@ public class EmployeeController {
 	@RequestMapping(value="/ajouter", method=RequestMethod.POST)
 	public ModelAndView ajouterEmployeePOST(@ModelAttribute("employeeModel") @Valid EmployeeModel employeeModel, BindingResult bindingResult, Model model)
 	{
+		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("employee/add");
 		if(bindingResult.hasErrors())

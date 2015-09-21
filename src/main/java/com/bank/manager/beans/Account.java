@@ -1,5 +1,6 @@
 package com.bank.manager.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -17,9 +18,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-
+@SuppressWarnings("serial")
 @Entity
-public class Account {
+public class Account implements Serializable{
 	{
 		this.lastLogin = new Date();
 	}
@@ -30,7 +31,7 @@ public class Account {
 	private String username;
 	private String password;
 	private Boolean enabled;
-	@OneToOne(targetEntity=Person.class, mappedBy="account")
+	@OneToOne(targetEntity=Person.class, mappedBy="account", fetch=FetchType.EAGER)
 	private Person person;
 	@OneToMany(targetEntity=Authority.class, mappedBy="account", fetch=FetchType.EAGER)
 	private List<Authority> authorities;

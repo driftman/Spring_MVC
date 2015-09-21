@@ -1,6 +1,7 @@
 package com.bank.manager.beans;
 
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING, length=4)
-public abstract class Compte {
+public abstract class Compte implements Serializable{
 	
 	{
 		this.dateCreation = new Date();

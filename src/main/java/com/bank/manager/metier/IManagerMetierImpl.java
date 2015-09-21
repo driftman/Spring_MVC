@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 
 import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
+import com.bank.manager.beans.Authority;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
@@ -246,6 +247,12 @@ public class IManagerMetierImpl implements IManagerMetier {
 	public String[] loadUserAuthorities(String username) {
 		// TODO Auto-generated method stub
 		return dao.loadUserAuthorities(username);
+	}
+
+	@Override
+	public Authority addAuthority(Authority authority, Account account) {
+		// TODO Auto-generated method stub
+		return dao.addAuthority(authority, account);
 	}
 	
 	

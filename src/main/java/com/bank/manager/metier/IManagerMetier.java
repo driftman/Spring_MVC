@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bank.manager.beans.Account;
 import com.bank.manager.beans.Adresse;
+import com.bank.manager.beans.Authority;
 import com.bank.manager.beans.Client;
 import com.bank.manager.beans.Compte;
 import com.bank.manager.beans.Coordonnee;
@@ -57,6 +58,8 @@ public Adresse addAddress(Adresse adresse);
 	public void deleteClient(Long code_client);
 	
 	public void deleteCompte(String code_compte);
+	
+	public Authority addAuthority(Authority authority, Account account);
 	
 	public Account findAccountByUsername(String username);
 	public String[] loadUserAuthorities(String username);

@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 import com.bank.manager.beans.Account;
+import com.bank.manager.beans.Person;
 import com.bank.manager.metier.IManagerMetier;
 
 
@@ -125,7 +126,7 @@ public class SpringSecurityDaoAuthentication  extends JdbcDaoSupport implements 
 
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
-		List<UserDetails> users = loadUsersByUsername(username);
+		List<CustomUser> users = loadUsersByUsername(username);
 
 		if (users.size() == 0) {
 			logger.debug("Query returned no results for user '" + username + "'");
@@ -137,7 +138,7 @@ public class SpringSecurityDaoAuthentication  extends JdbcDaoSupport implements 
 		else
 			logger.debug("IT IS ALRIGHT USER WITH USERNAME : "+username+" FOUND !");
 
-		UserDetails user = users.get(0); // contains no GrantedAuthority[]
+		CustomUser user = users.get(0); // contains no GrantedAuthority[]
 
 		Set<GrantedAuthority> dbAuthsSet = new HashSet<GrantedAuthority>();
 
@@ -161,19 +162,21 @@ public class SpringSecurityDaoAuthentication  extends JdbcDaoSupport implements 
 					"User {0} has no GrantedAuthority"));
 		}
 
-		return createUserDetails(username, user, dbAuths);
+		return new CustomUser(user.getPerson(), username, user.getPassword(),
+				user.isEnabled(), true, true, true, dbAuths);
 	}
 
 	/**
 	 * Executes the SQL <tt>usersByUsernameQuery</tt> and returns a list of UserDetails
 	 * objects. There should normally only be one matching user.
 	 */
-	protected List<UserDetails> loadUsersByUsername(String username) {
+	protected List<CustomUser> loadUsersByUsername(String username) {
 		if(buisiness == null)
 			throw new IllegalArgumentException("You shoud wire you Buisiness class, it is setted to null !");
 		Account account = buisiness.findAccountByUsername(username);
-		List<UserDetails> userDetails = new ArrayList<UserDetails>();
-		User user = new User(username, account.getPassword(), account.getEnabled(), true, true, true,
+		Person person = account.getPerson();
+		List<CustomUser> userDetails = new ArrayList<CustomUser>();
+		CustomUser user = new CustomUser(person,username, account.getPassword(), account.getEnabled(), true, true, true,
 				AuthorityUtils.NO_AUTHORITIES);
 		userDetails.add(user);
 		return userDetails;
@@ -196,28 +199,7 @@ public class SpringSecurityDaoAuthentication  extends JdbcDaoSupport implements 
 
 	
 
-	/**
-	 * Can be overridden to customize the creation of the final UserDetailsObject which is
-	 * returned by the <tt>loadUserByUsername</tt> method.
-	 *
-	 * @param username the name originally passed to loadUserByUsername
-	 * @param userFromUserQuery the object returned from the execution of the
-	 * @param combinedAuthorities the combined array of authorities from all the authority
-	 * loading queries.
-	 * @return the final UserDetails which should be used in the system.
-	 */
-	protected UserDetails createUserDetails(String username,
-			UserDetails userFromUserQuery, List<GrantedAuthority> combinedAuthorities) {
-		String returnUsername = userFromUserQuery.getUsername();
-
-		if (!usernameBasedPrimaryKey) {
-			returnUsername = username;
-		}
-
-		return new User(returnUsername, userFromUserQuery.getPassword(),
-				userFromUserQuery.isEnabled(), true, true, true, combinedAuthorities);
-	}
-
+	
 	
 
 	/**

@@ -1,5 +1,6 @@
 package com.bank.manager.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -10,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Tache {
+public class Tache implements Serializable {
 	
 	static 
 	{

@@ -446,4 +446,13 @@ public class IManagerDaoImpl implements IManagerDao{
 		
 	}
 
+	@Override
+	public Authority addAuthority(Authority authority, Account account) {
+		// TODO Auto-generated method stub
+		authority.setAccount(account);
+		em.persist(authority);
+		em.flush();
+		return authority;
+	}
+
 }

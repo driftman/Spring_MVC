@@ -1,6 +1,8 @@
 package com.bank.manager.beans;
 
-public class Printer {
+import java.io.Serializable;
+
+public class Printer implements Serializable {
 	
 	private Client client;
 	private Employee employee;

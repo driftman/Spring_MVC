@@ -10,6 +10,9 @@ import java.io.Serializable;
 
 
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -27,12 +30,30 @@ public class Authority implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	
 	private String username;
+	
 	private String authority;
+	
 	private Boolean enabled;
-	@ManyToOne(targetEntity=Account.class, fetch=FetchType.EAGER)
+	
+	@ManyToOne(targetEntity=Account.class)
 	private Account account;
+	
+	private transient TreeSet<String> auths = new TreeSet<String>();
+	
+	
 	public Authority() {}
+	//
+	public void addAuth(String auth)
+	{
+		this.auths.add(auth);
+	}
+	public TreeSet<String> getAuths()
+	{
+		return this.auths;
+	}
+	//
 	public Long getId() {
 		return id;
 	}
@@ -62,6 +83,12 @@ public class Authority implements Serializable{
 		this.username = username;
 		this.authority = authority;
 		this.enabled = enabled;
+	}
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 	
 	

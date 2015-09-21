@@ -1,5 +1,6 @@
 package com.bank.manager.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.DiscriminatorColumn;
@@ -15,7 +16,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType=DiscriminatorType.STRING, name="TYPE_OPERATION", length=4)
-public class Operation {
+public class Operation implements Serializable {
 	{
 		this.date = new Date();
 	}

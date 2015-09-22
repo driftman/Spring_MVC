@@ -52,6 +52,7 @@ public class EmployeeTest {
 		exception.expect(NullPointerException.class);
 		exception.expectMessage("NULL REFERENCE NOT ACCEPTED");
 		metier.addEmployee(null,completeAccount , 
+				new String[]{"ROLE_USER", "ROLE_ADMIN"},
 				null, completeAddress, null);
 	}
 	
@@ -59,7 +60,8 @@ public class EmployeeTest {
 	public void returnedValueNotNullException()
 	{
 	
-		Assert.assertNotNull(metier.addEmployee(new Employee(), new Account("userY", "passwordX", "secretPassX"), 
+		Assert.assertNotNull(metier.addEmployee(new Employee(), new Account("userY", "passwordX", "secretPassX"),
+				new String[]{"ROLE_USER", "ROLE_ADMIN"},
 				completeCoordonnee, completeAddress, null));
 	}
 	
@@ -79,6 +81,7 @@ public class EmployeeTest {
 	 public void findEmployeeWithMC()
 	 {
 		 metier.addEmployee(new Employee(), new Account("userZ", "passwordX", "secretPassX"), 
+				 new String[]{"ROLE_USER", "ROLE_ADMIN"},
 					completeCoordonnee, completeAddress, null);
 		 List<Employee> employees = metier.rechercherEmployeParMC("JOHN");
 		 Assert.assertTrue((employees.size() >= 1));

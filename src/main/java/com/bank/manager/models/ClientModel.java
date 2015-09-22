@@ -19,6 +19,12 @@ public class ClientModel {
 	@NotBlank
 	@Length(min=3, max=30, message="Le nom doit etre compris entre 4 et 30.")
 	private String nom;
+	public String getPassword_confirmation() {
+		return password_confirmation;
+	}
+	public void setPassword_confirmation(String password_confirmation) {
+		this.password_confirmation = password_confirmation;
+	}
 	@NotBlank
 	@Length(min=3, max=30, message="Le prenom doit etre compris entre 4 et 30.")
 	private String prenom;
@@ -42,6 +48,8 @@ public class ClientModel {
 	@NotBlank
 	@Length(min=5, max=30, message="Mot de passe entre 5 et 15 caractères.")
 	private String password;
+	@Length(min=5, max=30, message="Mot de passe entre 5 et 15 caractères.")
+	private String password_confirmation;
 	@NotBlank
 	@Length(min=4, max=30, message="Le Secret Pass doit etre compris entre 4 et 30.")
 	private String secret_pass;

@@ -29,8 +29,9 @@ public class Test {
 				"classpath*:/application-context.xml"
 		});
 		IManagerMetier metier = (IManagerMetier)context.getBean("metierService");
-		Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		System.out.println(object);
+		Client client = metier.getClient(4L);
+//		Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		System.out.println(object);
 //		metier.virement("CE2", "CE1", 1L, 2);
 		
 //		Account account = metier.findAccountByUsername("root");
@@ -75,7 +76,9 @@ public class Test {
 //		 Employee employee = new Employee();
 //		 Adresse adresse = new Adresse("MEKNES", "4, rue AHMED DIGHOUSSI ZITOUNE", 60000, 4);
 //		 Coordonnee coordonnee = new Coordonnee("Soufiane", "ELBAZ", 23, "elbaz.soufiane92@gmail.com");
-//		 metier.addEmployee(employee, coordonnee, adresse, metier.getEmployee(2L));
+//		 Account account = new Account("admin", "admin", "admin");
+//		 account.setEnabled(true);
+//		 metier.addEmployee(employee,account, new String[]{"ROLE_USER","ROLE_ADMIN"}, coordonnee, adresse, null);
 		
 //		Client c = new Client();
 //		
@@ -86,6 +89,8 @@ public class Test {
 //		Account account = new Account("client1", "password", "password");
 //		
 //		Situation situation = new Situation("SVP",true,false,30000,false,true);
+//		
+//		c.setAccepte(true);
 //		
 //		metier.addClient(c, account, situation, coordonnee, adresse, 1L);
 //		

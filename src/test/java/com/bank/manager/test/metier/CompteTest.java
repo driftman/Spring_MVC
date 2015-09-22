@@ -2,6 +2,7 @@ package com.bank.manager.test.metier;
 
 
 import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -75,6 +76,7 @@ public class CompteTest {
 	{
 		metier.addEmployee(new Employee(), 
 				new Account("userY", "passwordX", "secretPassX"), 
+				new String[]{"ROLE_USER", "ROLE_ADMIN"},
 				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
 				new Adresse("ville", "quartier", 4,4), null);
 		
@@ -88,6 +90,7 @@ public class CompteTest {
 		
 		metier.addEmployee(new Employee(), 
 				new Account("userZ", "passwordX", "secretPassX"), 
+				new String[]{"ROLE_USER", "ROLE_ADMIN"},
 				new Coordonnee("nom", "prenom", 20, "e@email.com"), 
 				new Adresse("ville", "quartier", 4,4), null);
 		

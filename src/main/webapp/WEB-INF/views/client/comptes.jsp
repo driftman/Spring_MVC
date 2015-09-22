@@ -1,12 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
+<%@ include file="../home.jsp" %>
 
-</body>
-</html>
+
+
+<c:choose>
+	<c:when test="${not empty comptes}">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
+				<table class="table">
+					<thead>
+						<tr><th>Code Compte</th><th>Type Compte</th><th>Solde</th><th>Date Creation</th><th>Actions</th></tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${comptes }" var="compte">
+							<tr><td>${compte.codeCompte }</td><td>${compte}</td><td>${compte.soldeDepart }</td><td>${compte.dateCreation}</td>
+							<td><a href="<c:url value="/employee/comptes/${compte.codeCompte }"></c:url>" class="btn btn-primary">Details</a></td> </tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</c:when>
+</c:choose>
+
+<%@ include file="../footer.jsp" %>

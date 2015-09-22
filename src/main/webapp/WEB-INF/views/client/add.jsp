@@ -23,8 +23,9 @@
 		<tr style="color: red; font-weight: bold;"><td></td><td><f:errors path="numero_lieu" ></f:errors></td></tr>
 		<tr><td>Nom d'utilisateur : </td><td><f:input path="username" type="text"/></td></tr>
 		<tr style="color: red; font-weight: bold;"><td></td><td><f:errors path="username" ></f:errors></td></tr>
-		<tr><td>Password : </td><td><f:input path="password" type="password"/></td></tr>
+		<tr><td>Mot de passe : </td><td><f:input path="password" type="password"/></td></tr>
 		<tr style="color: red; font-weight: bold;"><td></td><td><f:errors path="password" ></f:errors></td></tr>
+		<tr><td>Confirmation : </td><td><f:input path="password_confirmation" type="password"/></td></tr>
 		<tr><td>Secret Pass : </td><td><f:input path="secret_pass" type="text"/></td></tr>
 		<tr style="color: red; font-weight: bold;"><td></td><td><f:errors path="secret_pass" ></f:errors></td></tr>
 		<tr><td>Lettre Motivation : </td><td><f:textarea path="lettreMotivation" class="form-control"/></td></tr>

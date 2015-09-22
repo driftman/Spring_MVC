@@ -22,7 +22,7 @@ public interface IManagerDao {
 	
 	public Account addAccount(Account account);
 	
-	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup);
+	public Employee addEmployee(Employee employee, Account account, String[] authorities, Coordonnee coordonnee, Adresse adresse, Employee sup);
 	public Employee getEmployee(Long id);
 	public List<Employee> rechercherEmployeParMC(String mc);
 	

@@ -59,7 +59,7 @@ public class IManagerDaoImpl implements IManagerDao{
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adress, Employee sup) {
+	public Employee addEmployee(Employee employee, Account account, String[] authorities, Coordonnee coordonnee, Adresse adress, Employee sup) {
 		// TODO Auto-generated method stub
 		if(employee == null || coordonnee == null || adress == null)
 			throw new NullPointerException("NULL REFERENCE NOT ACCEPTED");
@@ -73,11 +73,21 @@ public class IManagerDaoImpl implements IManagerDao{
 			
 			coordonnee.setAdresse(adress);
 			employee.setCoordonnee(this.addCoordonnee(coordonnee));
-			employee.setAccount(this.addAccount(account));
+			this.addAccount(account);
+			addAuthorities(authorities, account);
+			employee.setAccount(account);
 			em.persist(employee);
 			em.flush();
 			return employee;
 		}
+	}
+	public void addAuthorities(String[] roleNames, Account account)
+	{
+		for(String role : roleNames)
+		 {
+			 Authority authority = new Authority(account.getUsername(), role, true);
+			 this.addAuthority(authority, account);
+		 }
 	}
 
 	@Override
@@ -115,7 +125,9 @@ public class IManagerDaoImpl implements IManagerDao{
 		Employee e = em.find(Employee.class, code_employee);
 		coordonnee.setAdresse(adresse);
 		client.setCoordonnee(this.addCoordonnee(coordonnee));
-		client.setAccount(this.addAccount(account));
+		this.addAccount(account);
+		this.addAuthority(new Authority(account.getUsername(), "ROLE_CLIENT", true), account);
+		client.setAccount(account);
 		client.setEmployee(e);
 		em.persist(situation);
 		client.setSituation(situation);

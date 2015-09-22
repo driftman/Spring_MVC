@@ -46,9 +46,9 @@ public class IManagerMetierImpl implements IManagerMetier {
 	}
 
 	@Override
-	public Employee addEmployee(Employee employee, Account account, Coordonnee coordonnee, Adresse adresse, Employee sup) {
+	public Employee addEmployee(Employee employee,  Account account, String[] authorities,Coordonnee coordonnee, Adresse adresse, Employee sup) {
 		// TODO Auto-generated method stub
-		return dao.addEmployee(employee, account, coordonnee, adresse, sup);
+		return dao.addEmployee(employee, account, authorities, coordonnee, adresse, sup);
 	}
 
 	@Override

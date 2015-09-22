@@ -69,6 +69,7 @@ public class ClientTest {
 	{
 		metier.addEmployee(new Employee(), 
 				new Account("userY", "passwordX", "secretPassX"), 
+				new String[]{"ROLE_USER", "ROLE_ADMIN"},
 				completeCoordonnee, completeAddress, null);
 		metier.addClient(
 				new Client(), 

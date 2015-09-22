@@ -31,19 +31,16 @@
 	</mvc:annotation-driven>
 	
 	
-	<security:http pattern="/public/**" security="none"/>
-	<security:http pattern="/login*" security="none"/>
-	 
 	<security:http use-expressions="false">
-		<security:intercept-url pattern="/**" access="ROLE_USER"/>
+		<security:intercept-url pattern="/employee/**" access="ROLE_ADMIN"/>
 		<security:form-login 
 		
 		login-page="/login"
 		username-parameter="username"
 		password-parameter="password"
-		default-target-url="/employee/ajouter"
+		default-target-url="/employee/comptes"
 		always-use-default-target="true"
-		authentication-failure-url="/login?error"
+		authentication-failure-url="/login?error=employee"
 		login-processing-url="/j_spring_security_check"
 		
 		/>
@@ -53,7 +50,7 @@
 		/>
 		<security:csrf disabled="true"/>
 	</security:http>
-	 
+	
 	
 	<security:authentication-manager>
 		<security:authentication-provider user-service-ref="springDaoAuthentication"/>

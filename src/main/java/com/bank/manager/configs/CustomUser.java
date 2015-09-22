@@ -17,9 +17,11 @@ package com.bank.manager.configs;
 
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -84,9 +86,14 @@ public class CustomUser implements UserDetails, CredentialsContainer {
 			boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
 
 		if (((username == null) || "".equals(username)) || (password == null
-				|| person == null )) {
+				)) {
 			throw new IllegalArgumentException(
 					"Cannot pass null or empty values to constructor");
+		}
+		if(person == null)
+		{
+			throw new IllegalArgumentException("This account has no proper user so do not forget to delete it or approve to "
+					+ "someone");
 		}
 		this.person = person;
 		this.username = username;
